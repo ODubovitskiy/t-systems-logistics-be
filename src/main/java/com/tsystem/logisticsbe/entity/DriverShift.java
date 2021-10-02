@@ -14,7 +14,7 @@ import java.time.LocalDateTime;
 @NoArgsConstructor
 @Entity
 @Table(name = "driver_shift")
-public class DriverShiftEntity {
+public class DriverShift {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -29,6 +29,6 @@ public class DriverShiftEntity {
 
     @JoinColumn(name = "driver_id")
     @OneToOne(cascade = {CascadeType.MERGE, CascadeType.DETACH, CascadeType.PERSIST, CascadeType.REFRESH})
-    private DriverEntity driver;
+    private Driver driver;
 
 }

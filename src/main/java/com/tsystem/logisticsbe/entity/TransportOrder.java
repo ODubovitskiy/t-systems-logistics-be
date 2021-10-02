@@ -1,5 +1,6 @@
 package com.tsystem.logisticsbe.entity;
 
+import com.tsystem.logisticsbe.entity.domain.TransportOrderStatus;
 import lombok.*;
 
 import javax.persistence.*;
@@ -12,8 +13,8 @@ import java.util.UUID;
 @NoArgsConstructor
 @Entity
 @Builder
-@Table(name = "request")
-public class RequestEntity {
+@Table(name = "transport_order")
+public class TransportOrder {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -27,22 +28,22 @@ public class RequestEntity {
             .substring(0, 5)
             .replaceAll("-", "");
 
-    @JoinColumn(name = "request_status_id")
-    @OneToOne(cascade = {CascadeType.MERGE, CascadeType.DETACH, CascadeType.PERSIST, CascadeType.REFRESH})
-    private RequestStatusEntity requestStatus;
+    @Enumerated(EnumType.STRING)
+    @Column(name = "status")
+    private TransportOrderStatus status;
 
-    @OneToMany(mappedBy = "request",
+    @OneToMany(mappedBy = "transportOrder",
             cascade = {CascadeType.MERGE, CascadeType.DETACH, CascadeType.PERSIST, CascadeType.REFRESH})
-    private List<WayPointEntity> wayPoints;
+    private List<WayPoint> wayPoints;
 
     @JoinColumn(name = "truck_id")
     @OneToOne(cascade = {CascadeType.MERGE, CascadeType.DETACH, CascadeType.PERSIST, CascadeType.REFRESH})
-    private TruckEntity truck;
+    private Truck truck;
 
     @ManyToMany(cascade = {CascadeType.MERGE, CascadeType.DETACH, CascadeType.PERSIST, CascadeType.REFRESH})
 
-    @JoinTable(name = "requests_drivers", joinColumns = {@JoinColumn(name = "request_id")},
+    @JoinTable(name = "transport_order_drivers", joinColumns = {@JoinColumn(name = "transport_order_id")},
             inverseJoinColumns = {@JoinColumn(name = "driver_id")})
-    private List<DriverEntity> drivers;
+    private List<Driver> drivers;
 
 }

@@ -12,14 +12,17 @@ import javax.persistence.*;
 @AllArgsConstructor
 @NoArgsConstructor
 @Entity
-@Table(name = "truck_status")
-public class TruckStatusEntity {
+@Table(name = "city")
+public class City {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Column(name = "status")
-    private String status;
+    @Column(name = "city")
+    private String city;
+
+    @Column(name = "distance")
+    private String distance;
 
 }

@@ -1,5 +1,6 @@
 package com.tsystem.logisticsbe.entity;
 
+import com.tsystem.logisticsbe.entity.domain.LoadingType;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -12,30 +13,26 @@ import javax.persistence.*;
 @AllArgsConstructor
 @NoArgsConstructor
 @Entity
-@Table(name = "truck")
-public class TruckEntity {
-
-    @Column(name = "model")
-    private String model;
+@Table(name = "way_point")
+public class WayPoint {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
-    @Column(name = "reg_number")
-    private String regNumber;
 
-    @Column(name = "driver_shift_size")
-    private Integer driverShiftSize;
-
-    @Column(name = "load_capacity")
-    private Integer loadCapacity;
-
-    @JoinColumn(name = "truck_status_id")
+    @JoinColumn(name = "city_id")
     @OneToOne(cascade = {CascadeType.MERGE, CascadeType.DETACH, CascadeType.PERSIST, CascadeType.REFRESH})
-    private TruckStatusEntity truckStatus;
+    private City city;
 
-    @JoinColumn(name = "current_city_id")
+    @JoinColumn(name = "shipment_id")
     @OneToOne(cascade = {CascadeType.MERGE, CascadeType.DETACH, CascadeType.PERSIST, CascadeType.REFRESH})
-    private CityEntity currentCity;
+    private Shipment shipment;
+
+    @Enumerated(EnumType.STRING)
+    @Column(name = "type")
+    private LoadingType type;
+
+    @ManyToOne(cascade = {CascadeType.MERGE, CascadeType.DETACH, CascadeType.PERSIST, CascadeType.REFRESH})
+    private TransportOrder transportOrder;
 
 }

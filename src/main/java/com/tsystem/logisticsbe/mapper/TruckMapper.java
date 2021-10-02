@@ -1,17 +1,19 @@
 package com.tsystem.logisticsbe.mapper;
 
 import com.tsystem.logisticsbe.dto.TruckDTO;
-import com.tsystem.logisticsbe.entity.TruckEntity;
+import com.tsystem.logisticsbe.entity.Truck;
 import org.mapstruct.Mapper;
+import org.mapstruct.Mapping;
 import org.mapstruct.MappingTarget;
 
 @Mapper(componentModel = "spring")
 public interface TruckMapper {
 
-    void updateTruckFromTruckDTO(TruckDTO truckDTO, @MappingTarget TruckEntity truckEntity);
+    @Mapping(target = "id", ignore = true)
+    void updateTruckFromTruckDTO(TruckDTO truckDTO, @MappingTarget Truck truck);
 
-    TruckEntity fromTruckDTOToTruckEntity(TruckDTO truckDTO);
+    Truck fromTruckDTOToTruckEntity(TruckDTO truckDTO);
 
-    TruckDTO fromTruckEntityToTruckDTO(TruckEntity truckEntity);
+    TruckDTO fromTruckEntityToTruckDTO(Truck truck);
 }
 

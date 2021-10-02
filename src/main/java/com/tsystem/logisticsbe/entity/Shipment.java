@@ -1,5 +1,6 @@
 package com.tsystem.logisticsbe.entity;
 
+import com.tsystem.logisticsbe.entity.domain.ShipmentStatus;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -13,10 +14,10 @@ import javax.persistence.*;
 @NoArgsConstructor
 @Entity
 @Table(name = "shipment")
-public class ShipmentEntity {
+public class Shipment {
 
-    @JoinColumn(name = "shipment_status_id")
-    @OneToOne(cascade = {CascadeType.MERGE, CascadeType.DETACH, CascadeType.PERSIST, CascadeType.REFRESH})
+    @Enumerated(EnumType.STRING)
+    @Column(name = "status")
     private ShipmentStatus status;
 
     @Id

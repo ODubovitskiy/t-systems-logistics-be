@@ -1,11 +1,13 @@
 package com.tsystem.logisticsbe.entity;
 
+import com.tsystem.logisticsbe.entity.domain.DriverStatus;
+
 import javax.persistence.*;
 import java.util.List;
 
 @Entity
 @Table(name = "driver")
-public class DriverEntity {
+public class Driver {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -23,19 +25,19 @@ public class DriverEntity {
     @Column(name = "hours_worked")
     private Integer hoursWorked;
 
-    @JoinColumn(name = "driver_status_id")
-    @OneToOne(cascade = {CascadeType.MERGE, CascadeType.DETACH, CascadeType.PERSIST, CascadeType.REFRESH})
-    private DriverStatusEntity driverStatus;
+    @Enumerated(EnumType.STRING)
+    @Column(name = "status")
+    private DriverStatus status;
 
     @JoinColumn(name = "current_city_id")
     @OneToOne(cascade = {CascadeType.MERGE, CascadeType.DETACH, CascadeType.PERSIST, CascadeType.REFRESH})
-    private CityEntity city;
+    private City city;
 
     @JoinColumn(name = "current_truck_id")
     @OneToOne(cascade = {CascadeType.MERGE, CascadeType.DETACH, CascadeType.PERSIST, CascadeType.REFRESH})
-    private TruckEntity truck;
+    private Truck truck;
 
     @ManyToMany(mappedBy = "drivers")
-    private List<RequestEntity> request;
+    private List<TransportOrder> transportOrder;
 }
 
