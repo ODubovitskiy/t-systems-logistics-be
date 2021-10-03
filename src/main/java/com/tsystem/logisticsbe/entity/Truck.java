@@ -22,6 +22,7 @@ public class Truck {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
+
     @Column(name = "reg_number")
     private String regNumber;
 
