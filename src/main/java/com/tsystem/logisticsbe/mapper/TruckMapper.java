@@ -10,10 +10,10 @@ import org.mapstruct.MappingTarget;
 public interface TruckMapper {
 
     @Mapping(target = "id", ignore = true)
-    void updateTruckFromTruckDTO(TruckDTO truckDTO, @MappingTarget Truck truck);
+    void updateFromDTO(TruckDTO truckDTO, @MappingTarget Truck truck);
 
-    Truck fromTruckDTOToTruckEntity(TruckDTO truckDTO);
+    Truck mapToEntity(TruckDTO truckDTO);
 
-    TruckDTO fromTruckEntityToTruckDTO(Truck truck);
+    TruckDTO mapToDTO(Truck truck);
 }
 

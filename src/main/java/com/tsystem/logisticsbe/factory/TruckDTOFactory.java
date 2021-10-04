@@ -1,6 +1,7 @@
 package com.tsystem.logisticsbe.factory;
 
 import com.tsystem.logisticsbe.dto.TruckDTO;
+import com.tsystem.logisticsbe.entity.City;
 import com.tsystem.logisticsbe.entity.Truck;
 import com.tsystem.logisticsbe.mapper.CityMapper;
 import com.tsystem.logisticsbe.mapper.TruckMapper;
@@ -22,19 +23,11 @@ public class TruckDTOFactory {
         this.truckMapper = truckMapper;
     }
 
-    private TruckDTO createDefault(Truck entity) {
-
-        return truckMapper.fromTruckEntityToTruckDTO(entity);
-
-//        return TruckDTO.builder()
-//                .id(entity.getId())
-//                .model(entity.getModel())
-//                .regNumber(entity.getRegNumber())
-//                .driverShiftSize(entity.getDriverShiftSize())
-//                .loadCapacity(entity.getLoadCapacity())
-//                .status(entity.getStatus())
-//                .cityDTO(cityMapper.getCityDTOFromCity(entity.getCurrentCity()))
-//                .build();
+    public TruckDTO createDefault(Truck entity) {
+        City currentCity = entity.getCurrentCity();
+        TruckDTO truckDTO = truckMapper.mapToDTO(entity);
+        truckDTO.setCityDTO(cityMapper.mapToDTO(currentCity));
+        return truckDTO;
     }
 
     public List<TruckDTO> createDefaultListTruckDTO(List<Truck> entities) {
