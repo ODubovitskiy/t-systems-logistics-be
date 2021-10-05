@@ -3,6 +3,8 @@ target/
 !.mvn/wrapper/maven-wrapper.jar
 !**/src/main/**/target/
 !**/src/test/**/target/
+src/main/java/db/create_tables.sql
+src/main/java/db/seed.sql
 
 ### STS ###
 .apt_generated
