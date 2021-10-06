@@ -8,7 +8,6 @@ import com.tsystem.logisticsbe.factory.TruckDTOFactory;
 import com.tsystem.logisticsbe.mapper.TruckMapper;
 import com.tsystem.logisticsbe.repository.CityRepository;
 import com.tsystem.logisticsbe.repository.TruckRepository;
-import com.tsystem.logisticsbe.util.validateion.TruckValidation;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
@@ -36,8 +35,6 @@ public class TruckService {
 
     @Transactional
     public Long create(TruckDTO truckDTO) {
-        TruckValidation.verifyData(truckDTO);
-
         City city = cityRepository.getById(truckDTO.getCityDTO().getId());
         Truck truck = truckMapper.mapToEntity(truckDTO);
         truck.setCurrentCity(city);
@@ -58,7 +55,6 @@ public class TruckService {
 
     @Transactional
     public TruckDTO update(Long id, TruckDTO truckDTO) {
-        TruckValidation.verifyData(truckDTO);
 
         City city = cityRepository.getById(truckDTO.getCityDTO().getId());
         Truck entityToUpdate = truckRepository.getById(id);

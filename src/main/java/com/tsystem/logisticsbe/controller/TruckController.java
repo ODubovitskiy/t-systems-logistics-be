@@ -8,15 +8,17 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
+import static com.tsystem.logisticsbe.util.validateion.TruckValidation.verifyData;
+
 @RestController
-@RequestMapping("api/trucks")
+@RequestMapping("api")
 public class TruckController {
 
-    private static final String GET_ALL = "";
-    private static final String GET_BY_ID = "/{id}";
-    private static final String CREATE = "";
-    private static final String UPDATE = "/{id}";
-    private static final String DELETE = "/{id}";
+    private static final String GET_ALL = "/trucks";
+    private static final String GET_BY_ID = "/trucks/{id}";
+    private static final String CREATE = "/trucks";
+    private static final String UPDATE = "/trucks/{id}";
+    private static final String DELETE = "/trucks/{id}";
 
     private final TruckService truckService;
 
@@ -26,13 +28,14 @@ public class TruckController {
     }
 
     @PostMapping(CREATE)
-    public ResponseEntity<Long> create(@RequestBody TruckDTO truckDTO) {
-        return ResponseEntity.ok(truckService.create(truckDTO));
+    public Long create(@RequestBody TruckDTO truckDTO) {
+        verifyData(truckDTO);
+        return truckService.create(truckDTO);
     }
 
     @GetMapping(GET_ALL)
-    public ResponseEntity<List<TruckDTO>> getAll() {
-        return ResponseEntity.ok(truckService.getAll());
+    public List<TruckDTO> getAll() {
+        return truckService.getAll();
     }
 
     @GetMapping(GET_BY_ID)
@@ -41,12 +44,13 @@ public class TruckController {
     }
 
     @PutMapping(UPDATE)
-    public ResponseEntity<TruckDTO> update(@PathVariable("id") Long id, @RequestBody TruckDTO truckDTO) {
-        return ResponseEntity.ok(truckService.update(id, truckDTO));
+    public TruckDTO update(@PathVariable("id") Long id, @RequestBody TruckDTO truckDTO) {
+        verifyData(truckDTO);
+        return truckService.update(id, truckDTO);
     }
 
     @DeleteMapping(DELETE)
-    public ResponseEntity<Long> delete(@PathVariable("id") Long id) {
-        return ResponseEntity.ok(truckService.delete(id));
+    public Long delete(@PathVariable("id") Long id) {
+        return truckService.delete(id);
     }
 }
