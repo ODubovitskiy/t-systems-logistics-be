@@ -7,6 +7,7 @@ import lombok.Setter;
 
 import javax.persistence.*;
 import java.time.LocalDateTime;
+import java.util.List;
 
 @Getter
 @Setter
@@ -24,11 +25,12 @@ public class DriverShift {
     private LocalDateTime startShift;
 
     @Column(name = "end_shift")
-    private LocalDateTime endtShift;
+    private LocalDateTime endShift;
 
+    @Column(name = "duration")
+    private Integer duration;
 
-    @JoinColumn(name = "driver_id")
-    @OneToOne(cascade = {CascadeType.MERGE, CascadeType.DETACH, CascadeType.PERSIST, CascadeType.REFRESH})
-    private Driver driver;
+    @ManyToMany(cascade = {CascadeType.MERGE, CascadeType.DETACH, CascadeType.PERSIST, CascadeType.REFRESH})
+    private List<Driver> drivers;
 
 }
