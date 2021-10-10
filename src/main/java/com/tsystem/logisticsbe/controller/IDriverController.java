@@ -6,28 +6,21 @@ import org.springframework.web.bind.annotation.*;
 import java.util.List;
 
 @RequestMapping("api")
+@CrossOrigin(origins = "http://localhost:8080")
 public interface IDriverController {
 
-    String GET_ALL = "/drivers";
-    String GET_BY_ID = "/drivers/{id}";
-    String CREATE = "/drivers";
-    String UPDATE = "/drivers/{id}";
-    String DELETE = "/drivers/{id}";
-
-    @PostMapping(CREATE)
+    @PostMapping("/drivers")
     String create(@RequestBody DriverDTO driverDTO);
 
-    @GetMapping(GET_ALL)
+    @GetMapping("/drivers")
     List<DriverDTO> getAll();
 
-    @GetMapping(GET_BY_ID)
+    @GetMapping("/drivers/{id}")
     DriverDTO getById(@PathVariable("id") Long id);
 
-    @PatchMapping(UPDATE)
+    @PatchMapping("/drivers/{id}")
     Long update(@PathVariable("id") Long id, @RequestBody DriverDTO driverDTO);
 
-    @DeleteMapping(DELETE)
+    @DeleteMapping("/drivers/{id}")
     Long delete(@PathVariable("id") Long id);
-
-
 }
