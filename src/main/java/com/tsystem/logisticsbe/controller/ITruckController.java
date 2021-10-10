@@ -9,25 +9,19 @@ import java.util.List;
 @RequestMapping("api")
 public interface ITruckController {
 
-    String GET_ALL = "/trucks";
-    String GET_BY_ID = "/trucks/{id}";
-    String CREATE = "/trucks";
-    String UPDATE = "/trucks/{id}";
-    String DELETE = "/trucks/{id}";
-
-    @PostMapping(CREATE)
+    @PostMapping("/trucks")
     @ResponseStatus(HttpStatus.CREATED)
     public Long create(@RequestBody TruckDTO truckDTO);
 
-    @GetMapping(GET_ALL)
+    @GetMapping("/trucks")
     public List<TruckDTO> getAll();
 
-    @GetMapping(GET_BY_ID)
+    @GetMapping("/trucks/{id}")
     public TruckDTO getById(@PathVariable("id") Long id);
 
-    @PutMapping(UPDATE)
+    @PutMapping("/trucks/{id}")
     public Long update(@PathVariable("id") Long id, @RequestBody TruckDTO truckDTO);
 
-    @DeleteMapping(DELETE)
+    @DeleteMapping("/trucks/{id}")
     public Long delete(@PathVariable("id") Long id);
 }
