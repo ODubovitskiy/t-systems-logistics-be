@@ -11,12 +11,12 @@ import com.tsystem.logisticsbe.repository.TruckRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
+import java.util.Optional;
 
 @Service
-public class TruckService {
+public class TruckService implements ITruckService {
 
     private final TruckRepository truckRepository;
     private final CityRepository cityRepository;
@@ -33,10 +33,8 @@ public class TruckService {
         this.truckMapper = truckMapper;
     }
 
-    @Transactional
-    public Long create(TruckDTO truckDTO) {
-        City city = cityRepository.getById(truckDTO.getCityDTO().getId());
-        Truck truck = truckMapper.mapToEntity(truckDTO);
+    public Long create(Truck truck) {
+        City city = cityRepository.getById(truck.getCurrentCity().getId());
         truck.setCurrentCity(city);
 
         return truckRepository.saveAndFlush(truck).getId();
@@ -53,16 +51,19 @@ public class TruckService {
         return truckMapper.mapToDTO(entity);
     }
 
-    @Transactional
-    public TruckDTO update(Long id, TruckDTO truckDTO) {
+    public Long update(Long id, Truck truck) {
 
-        City city = cityRepository.getById(truckDTO.getCityDTO().getId());
-        Truck entityToUpdate = truckRepository.getById(id);
-        truckMapper.updateFromDTO(truckDTO, entityToUpdate);
+        Optional<Truck> truckOptional = truckRepository.findById(id);
+        if (!truckOptional.isPresent()) {
+            throw new TruckNotFoundException(String.format("Truck with id = %s doesn't exist", id));
+        }
+        Truck entityToUpdate = truckOptional.get();
+        City city = cityRepository.getById(truck.getCurrentCity().getId());
+        truckMapper.updateTruck(truck, entityToUpdate);
         entityToUpdate.setCurrentCity(city);
         truckRepository.saveAndFlush(entityToUpdate);
 
-        return truckDTO;
+        return entityToUpdate.getId();
     }
 
     public Long delete(Long id) {
@@ -72,5 +73,4 @@ public class TruckService {
         } else
             throw new TruckNotFoundException(String.format("Truck with id = %s doesn't exist", id));
     }
-
 }

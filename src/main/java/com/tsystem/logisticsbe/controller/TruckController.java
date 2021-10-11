@@ -1,55 +1,51 @@
 package com.tsystem.logisticsbe.controller;
 
 import com.tsystem.logisticsbe.dto.TruckDTO;
+import com.tsystem.logisticsbe.entity.Truck;
+import com.tsystem.logisticsbe.mapper.TruckMapper;
+import com.tsystem.logisticsbe.service.ITruckService;
 import com.tsystem.logisticsbe.service.TruckService;
 import com.tsystem.logisticsbe.util.validateion.TruckValidation;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RestController;
 
 import java.util.List;
 
 
 @RestController
-@RequestMapping("api")
-public class TruckController {
+public class TruckController implements ITruckController {
 
-    private static final String GET_ALL = "/trucks";
-    private static final String GET_BY_ID = "/trucks/{id}";
-    private static final String CREATE = "/trucks";
-    private static final String UPDATE = "/trucks/{id}";
-    private static final String DELETE = "/trucks/{id}";
-
-    private final TruckService truckService;
+    private final ITruckService truckService;
+    private final TruckMapper truckMapper;
 
     @Autowired
-    public TruckController(TruckService truckService) {
+    public TruckController(TruckService truckService, TruckMapper truckMapper) {
         this.truckService = truckService;
+        this.truckMapper = truckMapper;
     }
 
-    @PostMapping(CREATE)
     public Long create(@RequestBody TruckDTO truckDTO) {
         TruckValidation.verifyData(truckDTO);
-        return truckService.create(truckDTO);
+        Truck truck = truckMapper.mapToEntity(truckDTO);
+        return truckService.create(truck);
     }
 
-    @GetMapping(GET_ALL)
     public List<TruckDTO> getAll() {
         return truckService.getAll();
     }
 
-    @GetMapping(GET_BY_ID)
-    public ResponseEntity<TruckDTO> getById(@PathVariable("id") Long id) {
-        return ResponseEntity.ok(truckService.getByID(id));
+    public TruckDTO getById(@PathVariable("id") Long id) {
+        return truckService.getByID(id);
     }
 
-    @PutMapping(UPDATE)
-    public TruckDTO update(@PathVariable("id") Long id, @RequestBody TruckDTO truckDTO) {
+    public Long update(@PathVariable("id") Long id, @RequestBody TruckDTO truckDTO) {
         TruckValidation.verifyData(truckDTO);
-        return truckService.update(id, truckDTO);
+        Truck truck = truckMapper.mapToEntity(truckDTO);
+        return truckService.update(id, truck);
     }
 
-    @DeleteMapping(DELETE)
     public Long delete(@PathVariable("id") Long id) {
         return truckService.delete(id);
     }

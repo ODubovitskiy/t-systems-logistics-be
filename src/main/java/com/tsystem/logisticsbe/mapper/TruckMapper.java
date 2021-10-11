@@ -14,18 +14,35 @@ public abstract class TruckMapper {
     public CityMapper cityMapper;
 
     @Mapping(target = "id", ignore = true)
-    public void updateFromDTO(TruckDTO truckDTO, @MappingTarget Truck truck) {
-        if (truckDTO != null) {
+    public void updateTruck(Truck source, @MappingTarget Truck destination) {
+
+        destination.setModel(source.getModel());
+        destination.setRegNumber(source.getRegNumber());
+        destination.setDriverShiftSize(source.getDriverShiftSize());
+        destination.setLoadCapacity(source.getLoadCapacity());
+        destination.setStatus(source.getStatus());
+        destination.setCurrentCity(source.getCurrentCity());
+    }
+
+
+    public Truck mapToEntity(TruckDTO truckDTO) {
+        if (truckDTO == null) {
+            return null;
+        } else {
+            Truck truck = new Truck();
             truck.setModel(truckDTO.getModel());
+            truck.setId(truckDTO.getId());
             truck.setRegNumber(truckDTO.getRegNumber());
             truck.setDriverShiftSize(truckDTO.getDriverShiftSize());
             truck.setLoadCapacity(truckDTO.getLoadCapacity());
             truck.setStatus(truckDTO.getStatus());
             truck.setCurrentCity(cityMapper.mapToEntity(truckDTO.getCityDTO()));
+            return truck;
         }
+
     }
 
-    public abstract Truck mapToEntity(TruckDTO truckDTO);
+    ;
 
     public TruckDTO mapToDTO(Truck truck) {
         if (truck == null) {
