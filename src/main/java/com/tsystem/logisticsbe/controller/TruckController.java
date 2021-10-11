@@ -2,13 +2,13 @@ package com.tsystem.logisticsbe.controller;
 
 import com.tsystem.logisticsbe.dto.TruckDTO;
 import com.tsystem.logisticsbe.service.TruckService;
+import com.tsystem.logisticsbe.util.validateion.TruckValidation;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
-import static com.tsystem.logisticsbe.util.validateion.TruckValidation.verifyData;
 
 @RestController
 @RequestMapping("api")
@@ -29,7 +29,7 @@ public class TruckController {
 
     @PostMapping(CREATE)
     public Long create(@RequestBody TruckDTO truckDTO) {
-        verifyData(truckDTO);
+        TruckValidation.verifyData(truckDTO);
         return truckService.create(truckDTO);
     }
 
@@ -45,7 +45,7 @@ public class TruckController {
 
     @PutMapping(UPDATE)
     public TruckDTO update(@PathVariable("id") Long id, @RequestBody TruckDTO truckDTO) {
-        verifyData(truckDTO);
+        TruckValidation.verifyData(truckDTO);
         return truckService.update(id, truckDTO);
     }
 

@@ -38,6 +38,6 @@ public class Driver {
     private Truck truck;
 
     @ManyToMany(mappedBy = "drivers")
-    private List<TransportOrder> transportOrder;
+    private List<TransportOrder> transportOrders;
 }
 
