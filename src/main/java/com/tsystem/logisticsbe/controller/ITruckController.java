@@ -7,6 +7,7 @@ import org.springframework.web.bind.annotation.*;
 import java.util.List;
 
 @RequestMapping("api")
+@CrossOrigin(origins = "http://localhost:8080")
 public interface ITruckController {
 
     @PostMapping("/trucks")

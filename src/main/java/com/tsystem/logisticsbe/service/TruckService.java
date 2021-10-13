@@ -12,6 +12,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
 
@@ -41,7 +42,7 @@ public class TruckService implements ITruckService {
     }
 
     public List<TruckDTO> getAll() {
-        List<Truck> truckEntities = truckRepository.findAll(Sort.by(Sort.Direction.DESC, "id"));
+        List<Truck> truckEntities = truckRepository.findByIsDeletedNull();
         return truckDTOFactory.createDefaultListTruckDTO(truckEntities);
     }
 
@@ -67,10 +68,11 @@ public class TruckService implements ITruckService {
     }
 
     public Long delete(Long id) {
-        if (truckRepository.existsById(id)) {
-            truckRepository.deleteById(id);
-            return id;
-        } else
-            throw new TruckNotFoundException(String.format("Truck with id = %s doesn't exist", id));
+
+        Truck truck = truckRepository.findById(id)
+                .orElseThrow(() -> new TruckNotFoundException(String.format("Truck with id = %s doesn't exist", id)));
+        truck.setIsDeleted(LocalDateTime.now());
+
+        return truck.getId();
     }
 }
