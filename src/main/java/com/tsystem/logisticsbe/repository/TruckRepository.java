@@ -8,4 +8,5 @@ import java.util.List;
 public interface TruckRepository extends JpaRepository<Truck, Long> {
 
     List<Truck> findAll();
+    List<Truck> findByIsDeletedNull();
 }

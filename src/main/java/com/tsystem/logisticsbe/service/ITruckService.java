@@ -18,5 +18,6 @@ public interface ITruckService {
     @Transactional
     public Long update(Long id, Truck truck);
 
+    @Transactional
     public Long delete(Long id);
 }
