@@ -21,7 +21,7 @@ public class DriverDTOFactory {
 
     public List<DriverDTO> createDefaultDriverDTOList(List<Driver> entities) {
         return entities.stream()
-                .map(driverMapper::mapToDriverDTO)
+                .map(driverMapper::mapToDTO)
                 .collect(Collectors.toList());
     }
 

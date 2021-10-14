@@ -1,7 +1,7 @@
 package com.tsystem.logisticsbe.controller;
 
+import com.tsystem.logisticsbe.controller.api.ITruckStatusController;
 import com.tsystem.logisticsbe.entity.domain.TruckStatus;
-import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RestController;
 

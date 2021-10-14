@@ -1,5 +1,6 @@
 package com.tsystem.logisticsbe.controller;
 
+import com.tsystem.logisticsbe.controller.api.IDriverStatusController;
 import com.tsystem.logisticsbe.entity.domain.DriverStatus;
 import org.springframework.web.bind.annotation.RestController;
 

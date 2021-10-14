@@ -60,7 +60,7 @@ public class TruckService implements ITruckService {
         }
         Truck entityToUpdate = truckOptional.get();
         City city = cityRepository.getById(truck.getCurrentCity().getId());
-        truckMapper.updateTruck(truck, entityToUpdate);
+        truckMapper.updateEntity(truck, entityToUpdate);
         entityToUpdate.setCurrentCity(city);
         truckRepository.saveAndFlush(entityToUpdate);
 

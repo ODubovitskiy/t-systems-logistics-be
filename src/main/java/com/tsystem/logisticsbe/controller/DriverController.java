@@ -1,8 +1,8 @@
 package com.tsystem.logisticsbe.controller;
 
+import com.tsystem.logisticsbe.controller.api.IDriverController;
 import com.tsystem.logisticsbe.dto.DriverDTO;
 import com.tsystem.logisticsbe.entity.Driver;
-import com.tsystem.logisticsbe.factory.DriverDTOFactory;
 import com.tsystem.logisticsbe.mapper.DriverMapper;
 import com.tsystem.logisticsbe.service.IDriverService;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -24,7 +24,7 @@ public class DriverController implements IDriverController {
 
     @Override
     public String create(DriverDTO driverDTO) {
-        Driver driver = driverMapper.mapToDriver(driverDTO);
+        Driver driver = driverMapper.mapToEntity(driverDTO);
         return driverService.create(driver);
     }
 
@@ -40,7 +40,7 @@ public class DriverController implements IDriverController {
 
     @Override
     public Long update(@PathVariable("id") Long id, @RequestBody DriverDTO driverDTO) {
-        Driver driver = driverMapper.mapToDriver(driverDTO);
+        Driver driver = driverMapper.mapToEntity(driverDTO);
         return driverService.update(id, driver);
     }
 

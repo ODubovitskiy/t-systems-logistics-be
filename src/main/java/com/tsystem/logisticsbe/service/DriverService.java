@@ -59,7 +59,7 @@ public class DriverService implements IDriverService {
                 .orElseThrow(() -> {
                     throw new DriverNotFoundExeption(String.format("Driver with id = %s doesn't exist.", id));
                 });
-        return driverMapper.mapToDriverDTO(driver);
+        return driverMapper.mapToDTO(driver);
     }
 
     @Override
@@ -68,7 +68,7 @@ public class DriverService implements IDriverService {
         if (!optionalDriver.isPresent())
             throw new DriverNotFoundExeption(String.format("Driver with id = %s doesn't exist", id));
         Driver driverToUpdate = optionalDriver.get();
-        driverMapper.updateDriver(driver, driverToUpdate);
+        driverMapper.updateEntity(driver, driverToUpdate);
         City city = cityRepository.getById(driver.getCity().getId());
         Truck truck = truckRepository.getById(driver.getTruck().getId());
         driverToUpdate.setCity(city);

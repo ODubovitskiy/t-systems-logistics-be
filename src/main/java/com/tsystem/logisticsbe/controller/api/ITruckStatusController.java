@@ -1,4 +1,4 @@
-package com.tsystem.logisticsbe.controller;
+package com.tsystem.logisticsbe.controller.api;
 
 import com.tsystem.logisticsbe.entity.domain.TruckStatus;
 import org.springframework.web.bind.annotation.CrossOrigin;

@@ -1,5 +1,6 @@
 package com.tsystem.logisticsbe.controller;
 
+import com.tsystem.logisticsbe.controller.api.ITruckController;
 import com.tsystem.logisticsbe.dto.TruckDTO;
 import com.tsystem.logisticsbe.entity.Truck;
 import com.tsystem.logisticsbe.mapper.TruckMapper;
