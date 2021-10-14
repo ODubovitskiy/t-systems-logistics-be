@@ -10,5 +10,4 @@ public interface CityMapper {
     City mapToEntity(CityDTO cityDTO);
 
     CityDTO mapToDTO(City city);
-
 }

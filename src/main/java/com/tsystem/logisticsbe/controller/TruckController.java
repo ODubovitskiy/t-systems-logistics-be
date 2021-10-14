@@ -49,4 +49,9 @@ public class TruckController implements ITruckController {
     public Long delete(@PathVariable("id") Long id) {
         return truckService.delete(id);
     }
+
+    @Override
+    public List<TruckDTO> getAvailableTrucks() {
+        return truckService.getAvailableTrucks();
+    }
 }
