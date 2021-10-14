@@ -28,7 +28,7 @@ public class Driver {
     private String lastName;
 
     @Column(name = "personal_number")
-    private String personamNumber;
+    private String personalNumber;
 
     @Column(name = "hours_worked")
     private Integer hoursWorked;

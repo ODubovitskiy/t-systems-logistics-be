@@ -18,7 +18,7 @@ public interface IDriverController {
     @GetMapping("/drivers/{id}")
     DriverDTO getById(@PathVariable("id") Long id);
 
-    @PatchMapping("/drivers/{id}")
+    @PutMapping("/drivers/{id}")
     Long update(@PathVariable("id") Long id, @RequestBody DriverDTO driverDTO);
 
     @DeleteMapping("/drivers/{id}")
