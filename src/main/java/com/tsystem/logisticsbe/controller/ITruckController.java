@@ -1,10 +1,12 @@
 package com.tsystem.logisticsbe.controller;
 
 import com.tsystem.logisticsbe.dto.TruckDTO;
+import com.tsystem.logisticsbe.entity.Truck;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.Optional;
 
 @RequestMapping("api")
 @CrossOrigin(origins = "http://localhost:8080")
@@ -12,17 +14,20 @@ public interface ITruckController {
 
     @PostMapping("/trucks")
     @ResponseStatus(HttpStatus.CREATED)
-    public Long create(@RequestBody TruckDTO truckDTO);
+    Long create(@RequestBody TruckDTO truckDTO);
 
     @GetMapping("/trucks")
-    public List<TruckDTO> getAll();
+    List<TruckDTO> getAll();
 
     @GetMapping("/trucks/{id}")
-    public TruckDTO getById(@PathVariable("id") Long id);
+    TruckDTO getById(@PathVariable("id") Long id);
 
     @PutMapping("/trucks/{id}")
-    public Long update(@PathVariable("id") Long id, @RequestBody TruckDTO truckDTO);
+    Long update(@PathVariable("id") Long id, @RequestBody TruckDTO truckDTO);
 
     @DeleteMapping("/trucks/{id}")
-    public Long delete(@PathVariable("id") Long id);
+    Long delete(@PathVariable("id") Long id);
+
+    @GetMapping("/trucks/available")
+    List<TruckDTO> getAvailableTrucks();
 }

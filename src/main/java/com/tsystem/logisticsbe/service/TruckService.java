@@ -9,10 +9,10 @@ import com.tsystem.logisticsbe.mapper.TruckMapper;
 import com.tsystem.logisticsbe.repository.CityRepository;
 import com.tsystem.logisticsbe.repository.TruckRepository;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
@@ -74,5 +74,13 @@ public class TruckService implements ITruckService {
         truck.setIsDeleted(LocalDateTime.now());
 
         return truck.getId();
+    }
+
+    @Override
+    public List<TruckDTO> getAvailableTrucks() {
+        List<Truck> trucks = new ArrayList<>();
+        if (truckRepository.getTrucksAvailable().isPresent())
+            trucks = truckRepository.getTrucksAvailable().get();
+        return truckDTOFactory.createDefaultListTruckDTO(trucks);
     }
 }
