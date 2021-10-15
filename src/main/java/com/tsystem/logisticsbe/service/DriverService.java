@@ -5,11 +5,11 @@ import com.tsystem.logisticsbe.entity.City;
 import com.tsystem.logisticsbe.entity.Driver;
 import com.tsystem.logisticsbe.entity.Truck;
 import com.tsystem.logisticsbe.exception.DriverNotFoundExeption;
-import com.tsystem.logisticsbe.factory.DriverDTOFactory;
 import com.tsystem.logisticsbe.mapper.DriverMapper;
 import com.tsystem.logisticsbe.repository.CityRepository;
 import com.tsystem.logisticsbe.repository.DriverRepository;
 import com.tsystem.logisticsbe.repository.TruckRepository;
+import com.tsystem.logisticsbe.service.api.IDriverService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -24,15 +24,13 @@ public class DriverService implements IDriverService {
     CityRepository cityRepository;
     TruckRepository truckRepository;
     DriverMapper driverMapper;
-    DriverDTOFactory driverDTOFactory;
 
     @Autowired
     public DriverService(DriverRepository driverRepository, CityRepository cityRepository,
-                         TruckRepository truckRepository, DriverDTOFactory driverDTOFactory, DriverMapper driverMapper) {
+                         TruckRepository truckRepository, DriverMapper driverMapper) {
         this.driverRepository = driverRepository;
         this.cityRepository = cityRepository;
         this.truckRepository = truckRepository;
-        this.driverDTOFactory = driverDTOFactory;
         this.driverMapper = driverMapper;
     }
 
@@ -50,7 +48,7 @@ public class DriverService implements IDriverService {
 
     @Override
     public List<DriverDTO> getAll() {
-        return driverDTOFactory.createDefaultDriverDTOList(driverRepository.findAll());
+        return driverMapper.mapToDtoList(driverRepository.findAll());
     }
 
     @Override

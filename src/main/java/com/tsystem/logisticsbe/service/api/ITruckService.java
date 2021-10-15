@@ -1,4 +1,4 @@
-package com.tsystem.logisticsbe.service;
+package com.tsystem.logisticsbe.service.api;
 
 import com.tsystem.logisticsbe.dto.TruckDTO;
 import com.tsystem.logisticsbe.entity.Truck;

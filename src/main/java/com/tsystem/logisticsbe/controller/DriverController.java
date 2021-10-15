@@ -4,7 +4,7 @@ import com.tsystem.logisticsbe.controller.api.IDriverController;
 import com.tsystem.logisticsbe.dto.DriverDTO;
 import com.tsystem.logisticsbe.entity.Driver;
 import com.tsystem.logisticsbe.mapper.DriverMapper;
-import com.tsystem.logisticsbe.service.IDriverService;
+import com.tsystem.logisticsbe.service.api.IDriverService;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;

@@ -4,7 +4,7 @@ import com.tsystem.logisticsbe.controller.api.ITruckController;
 import com.tsystem.logisticsbe.dto.TruckDTO;
 import com.tsystem.logisticsbe.entity.Truck;
 import com.tsystem.logisticsbe.mapper.TruckMapper;
-import com.tsystem.logisticsbe.service.ITruckService;
+import com.tsystem.logisticsbe.service.api.ITruckService;
 import com.tsystem.logisticsbe.service.TruckService;
 import com.tsystem.logisticsbe.util.validateion.TruckValidation;
 import org.springframework.beans.factory.annotation.Autowired;

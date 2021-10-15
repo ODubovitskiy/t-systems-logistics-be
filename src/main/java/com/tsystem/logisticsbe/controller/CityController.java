@@ -2,8 +2,8 @@ package com.tsystem.logisticsbe.controller;
 
 import com.tsystem.logisticsbe.controller.api.ICityController;
 import com.tsystem.logisticsbe.dto.CityDTO;
-import com.tsystem.logisticsbe.factory.CityFactory;
-import com.tsystem.logisticsbe.service.ICityService;
+import com.tsystem.logisticsbe.mapper.CityMapper;
+import com.tsystem.logisticsbe.service.api.ICityService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -13,16 +13,16 @@ import java.util.List;
 public class CityController implements ICityController {
 
     private final ICityService cityService;
-    private final CityFactory cityFactory;
+    private final CityMapper cityMapper;
 
     @Autowired
-    public CityController(ICityService cityService, CityFactory cityFactory) {
+    public CityController(ICityService cityService, CityMapper cityMapper) {
         this.cityService = cityService;
-        this.cityFactory = cityFactory;
+        this.cityMapper = cityMapper;
     }
 
     @Override
     public List<CityDTO> getAll() {
-        return cityFactory.createDefaultCityDTOList(cityService.getAll());
+        return cityMapper.mapToDtoList(cityService.getAll());
     }
 }

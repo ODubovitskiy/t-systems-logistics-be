@@ -1,16 +1,19 @@
 package com.tsystem.logisticsbe.entity;
 
 import com.tsystem.logisticsbe.entity.domain.TransportOrderStatus;
-import lombok.*;
+import lombok.AllArgsConstructor;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
 
 import javax.persistence.*;
 import java.util.List;
-import java.util.UUID;
 
+@Getter
+@Setter
 @AllArgsConstructor
 @NoArgsConstructor
 @Entity
-@Builder
 @Table(name = "transport_order")
 public class TransportOrder {
 
@@ -19,12 +22,7 @@ public class TransportOrder {
     private Long id;
 
     @Column(name = "number")
-    @Builder.Default
-    private String number = UUID
-            .randomUUID()
-            .toString()
-            .substring(0, 5)
-            .replaceAll("-", "");
+    private String number;
 
     @Enumerated(EnumType.STRING)
     @Column(name = "status")

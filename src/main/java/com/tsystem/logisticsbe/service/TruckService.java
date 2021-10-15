@@ -4,10 +4,10 @@ import com.tsystem.logisticsbe.dto.TruckDTO;
 import com.tsystem.logisticsbe.entity.City;
 import com.tsystem.logisticsbe.entity.Truck;
 import com.tsystem.logisticsbe.exception.TruckNotFoundException;
-import com.tsystem.logisticsbe.factory.TruckDTOFactory;
 import com.tsystem.logisticsbe.mapper.TruckMapper;
 import com.tsystem.logisticsbe.repository.CityRepository;
 import com.tsystem.logisticsbe.repository.TruckRepository;
+import com.tsystem.logisticsbe.service.api.ITruckService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -21,16 +21,14 @@ public class TruckService implements ITruckService {
 
     private final TruckRepository truckRepository;
     private final CityRepository cityRepository;
-    private final TruckDTOFactory truckDTOFactory;
     private final TruckMapper truckMapper;
 
 
     @Autowired
-    public TruckService(TruckRepository truckRepository, CityRepository cityRepository, TruckDTOFactory truckDTOFactory,
+    public TruckService(TruckRepository truckRepository, CityRepository cityRepository,
                         TruckMapper truckMapper) {
         this.truckRepository = truckRepository;
         this.cityRepository = cityRepository;
-        this.truckDTOFactory = truckDTOFactory;
         this.truckMapper = truckMapper;
     }
 
@@ -43,7 +41,7 @@ public class TruckService implements ITruckService {
 
     public List<TruckDTO> getAll() {
         List<Truck> truckEntities = truckRepository.findByIsDeletedNull();
-        return truckDTOFactory.createDefaultListTruckDTO(truckEntities);
+        return truckMapper.mapToDtoList(truckEntities);
     }
 
     public TruckDTO getByID(Long id) {
@@ -81,6 +79,6 @@ public class TruckService implements ITruckService {
         List<Truck> trucks = new ArrayList<>();
         if (truckRepository.getTrucksAvailable().isPresent())
             trucks = truckRepository.getTrucksAvailable().get();
-        return truckDTOFactory.createDefaultListTruckDTO(trucks);
+        return truckMapper.mapToDtoList(trucks);
     }
 }
