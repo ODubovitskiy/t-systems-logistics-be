@@ -5,6 +5,9 @@ import com.tsystem.logisticsbe.entity.Driver;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
+import java.util.List;
+import java.util.stream.Collectors;
+
 @Component
 public class DriverMapper implements Mapper<Driver, DriverDTO> {
 
@@ -66,5 +69,19 @@ public class DriverMapper implements Mapper<Driver, DriverDTO> {
             destination.setHoursWorked(source.getHoursWorked());
             destination.setCity(source.getCity());
         }
+    }
+
+    @Override
+    public List<DriverDTO> mapToDtoList(List<Driver> entities) {
+        return entities.stream()
+                .map(this::mapToDTO)
+                .collect(Collectors.toList());
+    }
+
+    @Override
+    public List<Driver> mapToEntityList(List<DriverDTO> dtos) {
+        return dtos.stream()
+                .map(this::mapToEntity)
+                .collect(Collectors.toList());
     }
 }
