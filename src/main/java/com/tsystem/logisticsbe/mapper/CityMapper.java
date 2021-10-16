@@ -4,9 +4,6 @@ import com.tsystem.logisticsbe.dto.CityDTO;
 import com.tsystem.logisticsbe.entity.City;
 import org.springframework.stereotype.Component;
 
-import java.util.List;
-import java.util.stream.Collectors;
-
 @Component
 public class CityMapper implements Mapper<City, CityDTO> {
 
@@ -44,17 +41,5 @@ public class CityMapper implements Mapper<City, CityDTO> {
             destination.setCity(source.getCity());
             destination.setDistance(source.getDistance());
         }
-    }
-
-    @Override
-    public List<CityDTO> mapToDtoList(List<City> entities) {
-        return entities.stream()
-                .map(this::mapToDTO)
-                .collect(Collectors.toList());
-    }
-
-    @Override
-    public List<City> mapToEntityList(List<CityDTO> dtos) {
-        return null;
     }
 }

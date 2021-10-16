@@ -5,19 +5,15 @@ import com.tsystem.logisticsbe.entity.TransportOrder;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
-import java.util.List;
-
 @Component
 public class TransportOrderMapper implements Mapper<TransportOrder, TransportOrderDTO> {
 
-    private final CityMapper cityMapper;
     private final TruckMapper truckMapper;
     private final DriverMapper driverMapper;
     private final WayPointMapper wayPointMapper;
 
     @Autowired
-    public TransportOrderMapper(CityMapper cityMapper, TruckMapper truckMapper, DriverMapper driverMapper, WayPointMapper wayPointMapper) {
-        this.cityMapper = cityMapper;
+    public TransportOrderMapper(TruckMapper truckMapper, DriverMapper driverMapper, WayPointMapper wayPointMapper) {
         this.truckMapper = truckMapper;
         this.driverMapper = driverMapper;
         this.wayPointMapper = wayPointMapper;
@@ -34,9 +30,12 @@ public class TransportOrderMapper implements Mapper<TransportOrder, TransportOrd
         order.setId(dto.getId());
         order.setNumber(dto.getNumber());
         order.setStatus(dto.getStatus());
-        order.setTruck(truckMapper.mapToEntity(dto.getTruck()));
-        order.setDrivers(driverMapper.mapToEntityList(dto.getDrivers()));
-        order.setWayPoints(wayPointMapper.mapToEntityList(dto.getWayPoints()));
+        if (dto.getTrucks() != null)
+            order.setTrucks(truckMapper.mapToEntityList(dto.getTrucks()));
+        else if (dto.getDrivers() != null)
+            order.setDrivers(driverMapper.mapToEntityList(dto.getDrivers()));
+        else if (dto.getWayPoints() != null)
+            order.setWayPoints(wayPointMapper.mapToEntityList(dto.getWayPoints()));
 
         return order;
     }
@@ -49,15 +48,5 @@ public class TransportOrderMapper implements Mapper<TransportOrder, TransportOrd
     @Override
     public void updateEntity(TransportOrder source, TransportOrder destination) {
 
-    }
-
-    @Override
-    public List<TransportOrderDTO> mapToDtoList(List<TransportOrder> entities) {
-        return null;
-    }
-
-    @Override
-    public List<TransportOrder> mapToEntityList(List<TransportOrderDTO> dtos) {
-        return null;
     }
 }

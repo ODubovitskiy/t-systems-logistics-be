@@ -5,9 +5,6 @@ import com.tsystem.logisticsbe.entity.Truck;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
-import java.util.List;
-import java.util.stream.Collectors;
-
 @Component
 public class TruckMapper implements Mapper<Truck, TruckDTO> {
 
@@ -28,19 +25,6 @@ public class TruckMapper implements Mapper<Truck, TruckDTO> {
             destination.setStatus(source.getStatus());
             destination.setCurrentCity(source.getCurrentCity());
         }
-    }
-
-    @Override
-    public List<TruckDTO> mapToDtoList(List<Truck> entities) {
-        return entities
-                .stream()
-                .map(this::mapToDTO)
-                .collect(Collectors.toList());
-    }
-
-    @Override
-    public List<Truck> mapToEntityList(List<TruckDTO> dtos) {
-        return null;
     }
 
     public Truck mapToEntity(TruckDTO truckDTO) {
@@ -75,4 +59,3 @@ public class TruckMapper implements Mapper<Truck, TruckDTO> {
         }
     }
 }
-

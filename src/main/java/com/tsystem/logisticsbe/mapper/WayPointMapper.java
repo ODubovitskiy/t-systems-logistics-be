@@ -2,16 +2,40 @@ package com.tsystem.logisticsbe.mapper;
 
 import com.tsystem.logisticsbe.dto.WayPointDTO;
 import com.tsystem.logisticsbe.entity.WayPoint;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Component;
-
-import java.util.List;
-import java.util.stream.Collectors;
 
 @Component
 public class WayPointMapper implements Mapper<WayPoint, WayPointDTO> {
+
+    private final CityMapper cityMapper;
+    private final ShipmentMapper shipmentMapper;
+    private final TransportOrderMapper transportOrderMapper;
+
+    @Autowired
+    public WayPointMapper(CityMapper cityMapper, ShipmentMapper shipmentMapper,
+                          @Lazy TransportOrderMapper transportOrderMapper) {
+        this.cityMapper = cityMapper;
+        this.shipmentMapper = shipmentMapper;
+        this.transportOrderMapper = transportOrderMapper;
+    }
+
     @Override
     public WayPoint mapToEntity(WayPointDTO dto) {
-        return null;
+        if (dto == null) {
+            return null;
+        }
+
+        WayPoint wayPoint = new WayPoint();
+
+        wayPoint.setId(dto.getId());
+        wayPoint.setType(dto.getType());
+        wayPoint.setCity(cityMapper.mapToEntity(dto.getCity()));
+        wayPoint.setShipment(shipmentMapper.mapToEntity(dto.getShipment()));
+        wayPoint.setOrder(transportOrderMapper.mapToEntity(dto.getTransportOrder()));
+
+        return wayPoint;
     }
 
     @Override
@@ -22,20 +46,5 @@ public class WayPointMapper implements Mapper<WayPoint, WayPointDTO> {
     @Override
     public void updateEntity(WayPoint source, WayPoint destination) {
 
-    }
-
-    @Override
-    public List<WayPointDTO> mapToDtoList(List<WayPoint> entities) {
-        return entities
-                .stream()
-                .map(this::mapToDTO)
-                .collect(Collectors.toList());
-    }
-
-    @Override
-    public List<WayPoint> mapToEntityList(List<WayPointDTO> dtos) {
-        return dtos.stream()
-                .map(this::mapToEntity)
-                .collect(Collectors.toList());
     }
 }
