@@ -2,10 +2,13 @@ package com.tsystem.logisticsbe.service;
 
 import com.tsystem.logisticsbe.dto.TruckDTO;
 import com.tsystem.logisticsbe.entity.City;
+import com.tsystem.logisticsbe.entity.Driver;
 import com.tsystem.logisticsbe.entity.Truck;
+import com.tsystem.logisticsbe.exception.ApiException;
 import com.tsystem.logisticsbe.exception.TruckNotFoundException;
 import com.tsystem.logisticsbe.mapper.TruckMapper;
 import com.tsystem.logisticsbe.repository.CityRepository;
+import com.tsystem.logisticsbe.repository.DriverRepository;
 import com.tsystem.logisticsbe.repository.TruckRepository;
 import com.tsystem.logisticsbe.service.api.ITruckService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -22,14 +25,16 @@ public class TruckService implements ITruckService {
     private final TruckRepository truckRepository;
     private final CityRepository cityRepository;
     private final TruckMapper truckMapper;
+    private final DriverRepository driverRepository;
 
 
     @Autowired
     public TruckService(TruckRepository truckRepository, CityRepository cityRepository,
-                        TruckMapper truckMapper) {
+                        TruckMapper truckMapper, DriverRepository driverRepository) {
         this.truckRepository = truckRepository;
         this.cityRepository = cityRepository;
         this.truckMapper = truckMapper;
+        this.driverRepository = driverRepository;
     }
 
     public Long create(Truck truck) {
@@ -69,8 +74,9 @@ public class TruckService implements ITruckService {
 
         Truck truck = truckRepository.findById(id)
                 .orElseThrow(() -> new TruckNotFoundException(String.format("Truck with id = %s doesn't exist", id)));
+        List<Driver> drivers = driverRepository.getAllByTruckId(truck.getId());
+        drivers.forEach(driver -> driver.setTruck(null));
         truck.setIsDeleted(LocalDateTime.now());
-
         return truck.getId();
     }
 

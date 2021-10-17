@@ -4,6 +4,7 @@ import com.tsystem.logisticsbe.dto.DriverDTO;
 import com.tsystem.logisticsbe.entity.City;
 import com.tsystem.logisticsbe.entity.Driver;
 import com.tsystem.logisticsbe.entity.Truck;
+import com.tsystem.logisticsbe.exception.ApiException;
 import com.tsystem.logisticsbe.exception.DriverNotFoundExeption;
 import com.tsystem.logisticsbe.mapper.DriverMapper;
 import com.tsystem.logisticsbe.repository.CityRepository;
@@ -14,6 +15,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
 
@@ -48,7 +50,7 @@ public class DriverService implements IDriverService {
 
     @Override
     public List<DriverDTO> getAll() {
-        return driverMapper.mapToDtoList(driverRepository.findAll());
+        return driverMapper.mapToDtoList(driverRepository.findByIsDeletedNull());
     }
 
     @Override
@@ -80,7 +82,9 @@ public class DriverService implements IDriverService {
         Optional<Driver> optionalDriver = driverRepository.findById(id);
         if (!optionalDriver.isPresent())
             throw new DriverNotFoundExeption(String.format("Driver with id = %s doesn't exist", id));
-        driverRepository.delete(optionalDriver.get());
+        Driver driver = optionalDriver.get();
+        driver.setIsDeleted(LocalDateTime.now());
+        driverRepository.saveAndFlush(driver);
         return id;
     }
 }

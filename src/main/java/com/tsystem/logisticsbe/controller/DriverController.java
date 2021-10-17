@@ -5,6 +5,7 @@ import com.tsystem.logisticsbe.dto.DriverDTO;
 import com.tsystem.logisticsbe.entity.Driver;
 import com.tsystem.logisticsbe.mapper.DriverMapper;
 import com.tsystem.logisticsbe.service.api.IDriverService;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
@@ -17,6 +18,7 @@ public class DriverController implements IDriverController {
     private final IDriverService driverService;
     private final DriverMapper driverMapper;
 
+    @Autowired
     public DriverController(IDriverService driverService, DriverMapper driverMapper) {
         this.driverService = driverService;
         this.driverMapper = driverMapper;
