@@ -1,17 +1,19 @@
 package com.tsystem.logisticsbe.dto;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
-import com.tsystem.logisticsbe.entity.Driver;
-import com.tsystem.logisticsbe.entity.Truck;
-import com.tsystem.logisticsbe.entity.WayPoint;
 import com.tsystem.logisticsbe.entity.domain.TransportOrderStatus;
+import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 
 import java.util.List;
 import java.util.UUID;
+
 @Builder
 @Getter
+@AllArgsConstructor
+@NoArgsConstructor
 public class TransportOrderDTO {
 
     @Builder.Default
@@ -21,9 +23,9 @@ public class TransportOrderDTO {
                     .substring(0, 5)
                     .replaceAll("-", ""));
     private Long id;
-    private TransportOrderStatus status;
+    private TransportOrderStatus status = TransportOrderStatus.IN_PROGRESS;
     @JsonProperty("way_points")
     private List<WayPointDTO> wayPoints;
-    private TruckDTO truck;
+    private List<TruckDTO> trucks;
     private List<DriverDTO> drivers;
 }

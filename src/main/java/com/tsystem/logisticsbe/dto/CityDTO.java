@@ -1,19 +1,18 @@
 package com.tsystem.logisticsbe.dto;
 
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
+import lombok.*;
 
 
 @Getter
 @Setter
 @AllArgsConstructor
 @NoArgsConstructor
+@EqualsAndHashCode
 public class CityDTO {
 
+    @EqualsAndHashCode.Exclude
     private Long id;
     private String city;
-    private String distance;
+    private Integer distance;
 
 }

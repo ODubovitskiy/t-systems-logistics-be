@@ -24,9 +24,6 @@ public class Shipment {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Column(name = "number")
-    private String number;
-
     @Column(name = "name")
     private String name;
 

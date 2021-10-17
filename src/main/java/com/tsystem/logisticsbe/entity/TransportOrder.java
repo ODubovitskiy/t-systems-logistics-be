@@ -28,16 +28,16 @@ public class TransportOrder {
     @Column(name = "status")
     private TransportOrderStatus status;
 
-    @OneToMany(mappedBy = "transportOrder",
+    @OneToMany(mappedBy = "order", fetch = FetchType.EAGER,
             cascade = {CascadeType.MERGE, CascadeType.DETACH, CascadeType.PERSIST, CascadeType.REFRESH})
     private List<WayPoint> wayPoints;
 
-    @JoinColumn(name = "truck_id")
-    @OneToOne(cascade = {CascadeType.MERGE, CascadeType.DETACH, CascadeType.PERSIST, CascadeType.REFRESH})
-    private Truck truck;
+    @ManyToMany(cascade = {CascadeType.MERGE, CascadeType.DETACH, CascadeType.PERSIST, CascadeType.REFRESH})
+    @JoinTable(name = "transport_order_trucks", joinColumns = {@JoinColumn(name = "transport_order_id")},
+            inverseJoinColumns = {@JoinColumn(name = "dtruck_id")})
+    private List<Truck> trucks;
 
     @ManyToMany(cascade = {CascadeType.MERGE, CascadeType.DETACH, CascadeType.PERSIST, CascadeType.REFRESH})
-
     @JoinTable(name = "transport_order_drivers", joinColumns = {@JoinColumn(name = "transport_order_id")},
             inverseJoinColumns = {@JoinColumn(name = "driver_id")})
     private List<Driver> drivers;

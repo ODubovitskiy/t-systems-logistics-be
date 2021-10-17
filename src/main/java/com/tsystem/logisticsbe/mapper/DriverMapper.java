@@ -31,8 +31,8 @@ public class DriverMapper implements Mapper<Driver, DriverDTO> {
         driver.setPersonalNumber(dto.getPersonalNumber());
         driver.setHoursWorked(dto.getHoursWorked());
         driver.setStatus(dto.getStatus());
-        driver.setCity(cityMapper.mapToEntity(dto.getCity()));
-        driver.setTruck(truckMapper.mapToEntity(dto.getTruck()));
+        driver.setCity(cityMapper.mapToEntity(dto.getCityDTO()));
+        driver.setTruck(truckMapper.mapToEntity(dto.getTruckDTO()));
 
         return driver;
     }
@@ -51,8 +51,8 @@ public class DriverMapper implements Mapper<Driver, DriverDTO> {
         driverDTO.setPersonalNumber(entity.getPersonalNumber());
         driverDTO.setHoursWorked(entity.getHoursWorked());
         driverDTO.setStatus(entity.getStatus());
-        driverDTO.setCity(cityMapper.mapToDTO(entity.getCity()));
-        driverDTO.setTruck(truckMapper.mapToDTO(entity.getTruck()));
+        driverDTO.setCityDTO(cityMapper.mapToDTO(entity.getCity()));
+        driverDTO.setTruckDTO(truckMapper.mapToDTO(entity.getTruck()));
 
         return driverDTO;
     }

@@ -1,10 +1,7 @@
 package com.tsystem.logisticsbe.entity;
 
 import com.tsystem.logisticsbe.entity.domain.LoadingType;
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
+import lombok.*;
 
 import javax.persistence.*;
 
@@ -13,6 +10,7 @@ import javax.persistence.*;
 @AllArgsConstructor
 @NoArgsConstructor
 @Entity
+@ToString
 @Table(name = "way_point")
 public class WayPoint {
 
@@ -32,7 +30,9 @@ public class WayPoint {
     @Column(name = "type")
     private LoadingType type;
 
-    @ManyToOne(cascade = {CascadeType.MERGE, CascadeType.DETACH, CascadeType.PERSIST, CascadeType.REFRESH})
-    private TransportOrder transportOrder;
+    @ManyToOne(fetch = FetchType.EAGER,
+            cascade = {CascadeType.MERGE, CascadeType.DETACH, CascadeType.PERSIST, CascadeType.REFRESH})
+    @JoinColumn(name = "order_id")
+    private TransportOrder order;
 
 }
