@@ -87,4 +87,16 @@ public class TruckService implements ITruckService {
             trucks = truckRepository.getTrucksAvailable().get();
         return truckMapper.mapToDtoList(trucks);
     }
+
+    @Override
+    public List<TruckDTO> getTrucksForOrder(int dispatchWeight) {
+        Optional<List<Truck>> trucksForOrder = truckRepository.getTrucksForOrder(dispatchWeight);
+        if (!trucksForOrder.isPresent())
+            throw new ApiException(500, "Oops, something has broken. Try again.");
+        List<Truck> trucks = trucksForOrder.get();
+        if (trucks.size() == 0) {
+            throw new ApiException(400, "There are no trucks can carry the weight of your shipments. Please change your request");
+        }
+        return truckMapper.mapToDtoList(trucks);
+    }
 }

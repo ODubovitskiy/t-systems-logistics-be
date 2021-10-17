@@ -87,4 +87,16 @@ public class DriverService implements IDriverService {
         driverRepository.saveAndFlush(driver);
         return id;
     }
+
+    @Override
+    public List<DriverDTO> getDriversForOrder(Integer travelTime) {
+        Optional<List<Driver>> driversForOrder = driverRepository.getDriversForOrder(travelTime);
+        if (!driversForOrder.isPresent())
+            throw new ApiException(500, "Oops, something has broken. Try again.");
+        List<Driver> drivers = driversForOrder.get();
+        if (driversForOrder.get().size() == 0)
+            throw new ApiException(400, "No drivers available for this order. Travel time is too much");
+
+        return driverMapper.mapToDtoList(drivers);
+    }
 }

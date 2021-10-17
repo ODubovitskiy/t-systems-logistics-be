@@ -5,7 +5,6 @@ import com.tsystem.logisticsbe.entity.Truck;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
-import java.util.Optional;
 
 public interface ITruckService {
 
@@ -23,4 +22,6 @@ public interface ITruckService {
     public Long delete(Long id);
 
     List<TruckDTO> getAvailableTrucks();
+
+    List<TruckDTO> getTrucksForOrder(int weight);
 }

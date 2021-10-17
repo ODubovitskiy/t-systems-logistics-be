@@ -1,11 +1,10 @@
 package com.tsystem.logisticsbe.controller.api;
 
+import com.fasterxml.jackson.databind.node.ObjectNode;
+import com.tsystem.logisticsbe.dto.OrderDeliveryDetailsDTO;
 import com.tsystem.logisticsbe.dto.TransportOrderDTO;
-import com.tsystem.logisticsbe.entity.TransportOrder;
-import org.springframework.web.bind.annotation.CrossOrigin;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.http.MediaType;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
@@ -14,8 +13,14 @@ import java.util.List;
 public interface ITransportOrderController {
 
     @GetMapping("/orders")
-    List<TransportOrder> getAll();
+    List<TransportOrderDTO> getAll();
 
-    @PostMapping("/orders")
-    Long create(TransportOrderDTO orderDTO);
+    @PostMapping(value = "/orders", consumes = MediaType.APPLICATION_JSON_VALUE)
+    Long create(@RequestBody ObjectNode json);
+
+    @GetMapping("/orders/{id}")
+    TransportOrderDTO getById(@PathVariable Long id);
+
+    @GetMapping(value = "/orders/order-delivery", consumes = MediaType.APPLICATION_JSON_VALUE)
+    OrderDeliveryDetailsDTO getOrderDeliveryData(@RequestBody ObjectNode json);
 }

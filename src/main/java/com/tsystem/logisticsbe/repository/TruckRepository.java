@@ -11,7 +11,13 @@ public interface TruckRepository extends JpaRepository<Truck, Long> {
 
     List<Truck> findByIsDeletedNull();
 
-    @Query("SELECT t FROM Truck t WHERE t.isDeleted IS NULL AND" +
-            " t.status = com.tsystem.logisticsbe.entity.domain.TruckStatus.WORKING")
+    @Query("SELECT t FROM Truck t WHERE t.isDeleted IS NULL " +
+            "AND t.status = com.tsystem.logisticsbe.entity.domain.TruckStatus.WORKING AND t.isAvailable = TRUE")
     Optional<List<Truck>> getTrucksAvailable();
+
+    @Query("SELECT t FROM Truck t WHERE t.isAvailable= TRUE " +
+            "AND t.isDeleted is null  " +
+            "AND t.status = 'WORKING'  " +
+            "AND t.loadCapacity >= :weight")
+    Optional<List<Truck>> getTrucksForOrder(int weight);
 }
