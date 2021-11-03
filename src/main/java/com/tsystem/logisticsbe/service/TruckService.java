@@ -20,6 +20,7 @@ import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
+import java.util.Set;
 
 @Service
 public class TruckService implements ITruckService {
@@ -92,14 +93,14 @@ public class TruckService implements ITruckService {
     }
 
     @Override
-    public List<TruckDTO> getTrucksForOrder(int dispatchWeight) {
-        Optional<List<Truck>> trucksForOrder = truckRepository.getTrucksForOrder(dispatchWeight);
+    public Set<TruckDTO> getTrucksForOrder(List<City> citiesToStart, Integer shipmentsTotalWeight) {
+        Optional<Set<Truck>> trucksForOrder = truckRepository.getTrucksForOrder(citiesToStart, shipmentsTotalWeight);
         if (!trucksForOrder.isPresent())
-            throw new ApiException(500, "Oops, something has broken. Try again.");
-        List<Truck> trucks = trucksForOrder.get();
-        if (trucks.size() == 0) {
-            throw new ApiException(400, "There are no trucks can carry the weight of your shipments. Please change your request");
-        }
-        return truckMapper.mapToDtoList(trucks);
+            throw new ApiException(HttpStatus.BAD_REQUEST, "Oops, something has broken. Try again.");
+        Set<Truck> trucks = trucksForOrder.get();
+        if (trucks.size() == 0)
+            throw new ApiException(HttpStatus.BAD_REQUEST, "There are no trucks can deliver your shipments. Please change your request");
+
+        return truckMapper.mapToDtoSet(trucks);
     }
 }
