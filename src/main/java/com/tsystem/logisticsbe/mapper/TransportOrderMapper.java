@@ -27,14 +27,13 @@ public class TransportOrderMapper implements Mapper<TransportOrder, TransportOrd
 
         TransportOrder order = new TransportOrder();
 
-        order.setId(dto.getId());
         order.setNumber(dto.getNumber());
         order.setStatus(dto.getStatus());
-        if (dto.getTrucks() != null)
-            order.setTrucks(truckMapper.mapToEntityList(dto.getTrucks()));
-        else if (dto.getDrivers() != null)
-            order.setDrivers(driverMapper.mapToEntityList(dto.getDrivers()));
-        else if (dto.getWayPoints() != null)
+        if (dto.getTruck() != null)
+            order.setTruck(truckMapper.mapToEntity(dto.getTruck()));
+        if (dto.getDrivers() != null)
+            order.setDrivers(driverMapper.mapToEntitySet(dto.getDrivers()));
+        if (dto.getWayPoints() != null)
             order.setWayPoints(wayPointMapper.mapToEntityList(dto.getWayPoints()));
 
         return order;
