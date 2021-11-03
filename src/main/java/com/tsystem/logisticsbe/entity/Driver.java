@@ -1,10 +1,9 @@
 package com.tsystem.logisticsbe.entity;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 import com.tsystem.logisticsbe.entity.domain.DriverStatus;
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
+import lombok.*;
 
 import javax.persistence.*;
 import java.time.LocalDateTime;
@@ -15,6 +14,7 @@ import java.util.List;
 @AllArgsConstructor
 @NoArgsConstructor
 @Entity
+@EqualsAndHashCode
 @Table(name = "driver")
 public class Driver {
 
@@ -50,6 +50,8 @@ public class Driver {
     private Truck truck;
 
     @ManyToMany(mappedBy = "drivers")
+    @EqualsAndHashCode.Exclude
+    @JsonBackReference
     private List<TransportOrder> transportOrders;
 }
 

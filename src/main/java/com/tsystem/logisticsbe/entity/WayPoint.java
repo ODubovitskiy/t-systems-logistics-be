@@ -1,5 +1,6 @@
 package com.tsystem.logisticsbe.entity;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
 import com.tsystem.logisticsbe.entity.domain.LoadingType;
 import lombok.*;
 
@@ -33,6 +34,7 @@ public class WayPoint {
     @ManyToOne(fetch = FetchType.EAGER,
             cascade = {CascadeType.MERGE, CascadeType.DETACH, CascadeType.PERSIST, CascadeType.REFRESH})
     @JoinColumn(name = "order_id")
+    @JsonBackReference
     private TransportOrder order;
 
 }

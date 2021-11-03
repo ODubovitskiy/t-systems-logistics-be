@@ -27,6 +27,9 @@ public class Shipment {
     @Column(name = "name")
     private String name;
 
+    @Column(name = "number")
+    private String number;
+
     @Column(name = "weight")
     private Integer weight;
 

@@ -5,7 +5,6 @@ import lombok.*;
 import org.hibernate.annotations.ColumnDefault;
 
 import javax.persistence.*;
-import javax.validation.constraints.NotNull;
 import java.time.LocalDateTime;
 
 @Getter
@@ -24,7 +23,7 @@ public class Truck {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Column(name = "reg_number", nullable = false)
+    @Column(name = "reg_number", nullable = false, unique = true)
     private String regNumber;
 
     @Column(name = "driver_shift_size")

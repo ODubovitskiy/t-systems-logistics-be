@@ -1,7 +1,12 @@
 package com.tsystem.logisticsbe.dto;
 
 import com.tsystem.logisticsbe.entity.domain.ShipmentStatus;
-import lombok.*;
+import lombok.AllArgsConstructor;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
+
+import java.util.Random;
 
 @Getter
 @Setter
@@ -13,5 +18,5 @@ public class ShipmentDTO {
     private ShipmentStatus status;
     private String name;
     private Integer weight;
-
+    private String number = String.valueOf(new Random().nextInt(10000));
 }

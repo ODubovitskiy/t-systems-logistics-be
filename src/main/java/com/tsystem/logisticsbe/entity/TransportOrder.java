@@ -1,5 +1,7 @@
 package com.tsystem.logisticsbe.entity;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 import com.tsystem.logisticsbe.entity.domain.TransportOrderStatus;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -8,6 +10,7 @@ import lombok.Setter;
 
 import javax.persistence.*;
 import java.util.List;
+import java.util.Set;
 
 @Getter
 @Setter
@@ -30,16 +33,17 @@ public class TransportOrder {
 
     @OneToMany(mappedBy = "order", fetch = FetchType.EAGER,
             cascade = {CascadeType.MERGE, CascadeType.DETACH, CascadeType.PERSIST, CascadeType.REFRESH})
+    @JsonManagedReference
     private List<WayPoint> wayPoints;
 
-    @ManyToMany(cascade = {CascadeType.MERGE, CascadeType.DETACH, CascadeType.PERSIST, CascadeType.REFRESH})
-    @JoinTable(name = "transport_order_trucks", joinColumns = {@JoinColumn(name = "transport_order_id")},
-            inverseJoinColumns = {@JoinColumn(name = "dtruck_id")})
-    private List<Truck> trucks;
+    @OneToOne(cascade = {CascadeType.MERGE, CascadeType.DETACH, CascadeType.PERSIST, CascadeType.REFRESH})
+    @JoinColumn(name = "truck_id")
+    private Truck truck;
 
     @ManyToMany(cascade = {CascadeType.MERGE, CascadeType.DETACH, CascadeType.PERSIST, CascadeType.REFRESH})
     @JoinTable(name = "transport_order_drivers", joinColumns = {@JoinColumn(name = "transport_order_id")},
             inverseJoinColumns = {@JoinColumn(name = "driver_id")})
-    private List<Driver> drivers;
+    @JsonManagedReference
+    private Set<Driver> drivers;
 
 }
