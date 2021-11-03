@@ -4,7 +4,7 @@ import com.tsystem.logisticsbe.dto.DriverDTO;
 import com.tsystem.logisticsbe.entity.City;
 import com.tsystem.logisticsbe.entity.Driver;
 import com.tsystem.logisticsbe.entity.Truck;
-import com.tsystem.logisticsbe.exception.ApiException;
+import com.tsystem.logisticsbe.entity.domain.DriverStatus;
 import com.tsystem.logisticsbe.exception.DriverNotFoundExeption;
 import com.tsystem.logisticsbe.mapper.DriverMapper;
 import com.tsystem.logisticsbe.repository.CityRepository;
@@ -42,7 +42,10 @@ public class DriverService implements IDriverService {
         City city = cityRepository.getById(driver.getCity().getId());
         Truck truck = truckRepository.getById(driver.getTruck().getId());
         driver.setCity(city);
-        driver.setTruck(truck);
+        if (driver.getStatus() != DriverStatus.REST)
+            driver.setTruck(truck);
+        else
+            driver.setTruck(null);
         driverRepository.save(driver);
 
         return String.format("%s %s", driver.getName(), driver.getLastName());
@@ -72,7 +75,10 @@ public class DriverService implements IDriverService {
         City city = cityRepository.getById(driver.getCity().getId());
         Truck truck = truckRepository.getById(driver.getTruck().getId());
         driverToUpdate.setCity(city);
-        driverToUpdate.setTruck(truck);
+        if (driver.getStatus() == DriverStatus.DRIVING | driver.getStatus() == DriverStatus.ON_SHIFT)
+            driverToUpdate.setTruck(truck);
+        if (driver.getStatus() == DriverStatus.REST)
+            driverToUpdate.setTruck(null);
 
         return driverToUpdate.getId();
     }
@@ -86,17 +92,5 @@ public class DriverService implements IDriverService {
         driver.setIsDeleted(LocalDateTime.now());
         driverRepository.saveAndFlush(driver);
         return id;
-    }
-
-    @Override
-    public List<DriverDTO> getDriversForOrder(Integer travelTime) {
-        Optional<List<Driver>> driversForOrder = driverRepository.getDriversForOrder(travelTime);
-        if (!driversForOrder.isPresent())
-            throw new ApiException(500, "Oops, something has broken. Try again.");
-        List<Driver> drivers = driversForOrder.get();
-        if (driversForOrder.get().size() == 0)
-            throw new ApiException(400, "No drivers available for this order. Travel time is too much");
-
-        return driverMapper.mapToDtoList(drivers);
     }
 }
