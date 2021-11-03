@@ -33,8 +33,9 @@ public class TransportOrderController implements ITransportOrderController {
     }
 
     @Override
-    public Long create(ObjectNode json) {
-        return null;
+    public TransportOrder create(TransportOrderDTO transportOrderDTO) {
+        TransportOrder order = transportOrderMapper.mapToEntity(transportOrderDTO);
+        return transportOrderService.create(order);
     }
 
     @Override

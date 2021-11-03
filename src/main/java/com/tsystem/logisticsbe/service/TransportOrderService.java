@@ -55,19 +55,59 @@ public class TransportOrderService implements ITransportOrderService {
     }
 
     @Override
-    public TransportOrder create(TransportOrder order, List<WayPoint> route) {
-        //Todo Transactional method does a lot of things.
+    public TransportOrder create(TransportOrder order) {
+        Truck truck = handleTruckForOrder(order);
+        order.setTruck(truck);
 
+        Set<Driver> drivers = handleDriversForOrder(order, truck);
+        order.setDrivers(drivers);
 
+        List<WayPoint> wayPoints = handleWaypointsForOrder(order);
+        order.setWayPoints(wayPoints);
 
+        TransportOrder transportOrder = transportOrderRepository.saveAndFlush(order);
+        wayPoints.forEach(wayPoint -> wayPoint.setOrder(transportOrder));
 
+        return transportOrder;
+    }
 
+    private List<WayPoint> handleWaypointsForOrder(TransportOrder order) {
+        List<WayPoint> wayPoints = new ArrayList<>();
+        for (WayPoint wayPoint : order.getWayPoints()) {
+            Optional<City> cityOptional = cityRepository.findById(wayPoint.getCity().getId());
+            if (!cityOptional.isPresent())
+                throw new ApiException(HttpStatus.NOT_FOUND, String.format("There is no city %s", wayPoint.getCity().getCity()));
+            wayPoint.setCity(cityOptional.get());
+            wayPoint.getShipment().setStatus(ShipmentStatus.IN_PROGRESS);
+            wayPoints.add(wayPoint);
+        }
+        return wayPoints;
+    }
 
-        //Save Order only after all drivers and trucks are checked
-        TransportOrder savedOrder = transportOrderRepository.save(order);
-        route.forEach(item -> {
-            item.setOrder(savedOrder);
-        });
+    private Set<Driver> handleDriversForOrder(TransportOrder order, Truck truck) {
+        Set<Driver> drivers = new HashSet<>();
+        for (Driver dr : order.getDrivers()) {
+            Optional<Driver> driverOptional = driverRepository.findById(dr.getId());
+            if (!driverOptional.isPresent())
+                throw new ApiException(HttpStatus.BAD_REQUEST, String.format("There is no driver %s", dr.getName()));
+            Driver driver = driverOptional.get();
+            if (!Objects.equals(truck.getCurrentCity(), driver.getCity()))
+                throw new ApiException(HttpStatus.BAD_REQUEST, "Drivers and the truck are located in diferent cities");
+            driver.setStatus(DriverStatus.ON_SHIFT);
+            driver.setTruck(truck);
+            drivers.add(driver);
+        }
+        return drivers;
+    }
+
+    private Truck handleTruckForOrder(TransportOrder order) {
+        Optional<Truck> truckOptional = truckRepository.findById(order.getTruck().getId());
+        if (!truckOptional.isPresent())
+            throw new ApiException(HttpStatus.NOT_FOUND, String.format("There is no truck %s", order.getTruck().getModel()));
+        Truck truck = truckOptional.get();
+        truck.setAvailable(false);
+        return truck;
+    }
 
     /**
      * Returns orderDeliveryDetailsDTO containing drivers and trucks available to deliver shipments through stated waypoints.
