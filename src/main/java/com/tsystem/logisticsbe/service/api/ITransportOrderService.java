@@ -1,5 +1,6 @@
 package com.tsystem.logisticsbe.service.api;
 
+import com.tsystem.logisticsbe.dto.PreOrderDTO;
 import com.tsystem.logisticsbe.dto.TransportOrderDTO;
 import com.tsystem.logisticsbe.entity.TransportOrder;
 import com.tsystem.logisticsbe.entity.WayPoint;
@@ -12,5 +13,7 @@ public interface ITransportOrderService {
     List<TransportOrderDTO> getAll();
 
     @Transactional(rollbackFor = Exception.class)
-    TransportOrder create(TransportOrder order, List<WayPoint> route);
+    TransportOrder create(TransportOrder order);
+
+    PreOrderDTO getPreOrder(PreOrderDTO preOrderDTO, List<WayPoint> wayPoints);
 }

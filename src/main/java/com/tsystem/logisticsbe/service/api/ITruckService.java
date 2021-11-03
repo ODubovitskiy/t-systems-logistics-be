@@ -1,10 +1,12 @@
 package com.tsystem.logisticsbe.service.api;
 
 import com.tsystem.logisticsbe.dto.TruckDTO;
+import com.tsystem.logisticsbe.entity.City;
 import com.tsystem.logisticsbe.entity.Truck;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
+import java.util.Set;
 
 public interface ITruckService {
 
@@ -23,5 +25,5 @@ public interface ITruckService {
 
     List<TruckDTO> getAvailableTrucks();
 
-    List<TruckDTO> getTrucksForOrder(int weight);
+    Set<TruckDTO> getTrucksForOrder(List<City> citiesToStart, Integer weight);
 }
