@@ -46,7 +46,7 @@ public class Driver {
     private City city;
 
     @JoinColumn(name = "current_truck_id")
-    @OneToOne(cascade = {CascadeType.MERGE, CascadeType.DETACH, CascadeType.PERSIST, CascadeType.REFRESH})
+    @ManyToOne(cascade = {CascadeType.MERGE, CascadeType.DETACH, CascadeType.PERSIST, CascadeType.REFRESH})
     private Truck truck;
 
     @ManyToMany(mappedBy = "drivers")

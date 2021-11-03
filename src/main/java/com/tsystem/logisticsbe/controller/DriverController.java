@@ -3,9 +3,11 @@ package com.tsystem.logisticsbe.controller;
 import com.tsystem.logisticsbe.controller.api.IDriverController;
 import com.tsystem.logisticsbe.dto.DriverDTO;
 import com.tsystem.logisticsbe.entity.Driver;
+import com.tsystem.logisticsbe.exception.ApiException;
 import com.tsystem.logisticsbe.mapper.DriverMapper;
 import com.tsystem.logisticsbe.service.api.IDriverService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
@@ -49,5 +51,12 @@ public class DriverController implements IDriverController {
     @Override
     public Long delete(@PathVariable("id") Long id) {
         return driverService.delete(id);
+    }
+
+    @Override
+    public DriverDTO getDriverByPersonalNumber(String personalNumber) {
+        if (personalNumber.isEmpty())
+            throw new ApiException(HttpStatus.BAD_REQUEST, "Number is incorrect");
+        return driverService.getDriverByPersonalNumber(personalNumber);
     }
 }

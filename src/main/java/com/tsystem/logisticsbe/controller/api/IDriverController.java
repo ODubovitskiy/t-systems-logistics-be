@@ -23,4 +23,7 @@ public interface IDriverController {
 
     @DeleteMapping("/drivers/{id}")
     Long delete(@PathVariable("id") Long id);
+
+    @GetMapping("/drivers/lc/{personalNumber}")
+    DriverDTO getDriverByPersonalNumber(@PathVariable("personalNumber") String personalNumber);
 }

@@ -3,11 +3,13 @@ package com.tsystem.logisticsbe.repository;
 
 import com.tsystem.logisticsbe.entity.City;
 import com.tsystem.logisticsbe.entity.Driver;
+import com.tsystem.logisticsbe.entity.Truck;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 
 import java.util.HashSet;
 import java.util.List;
+import java.util.Optional;
 import java.util.Set;
 
 
@@ -25,4 +27,9 @@ public interface DriverRepository extends JpaRepository<Driver, Long> {
     HashSet<Driver> getDriversForOrder(Integer travelTime, City city);
 
     List<Driver> getAllByTruckId(Long id);
+
+    Optional<Driver> getDriverByPersonalNumber(String number);
+
+    Set<Driver> getDriversByTruck(Truck truck);
+
 }

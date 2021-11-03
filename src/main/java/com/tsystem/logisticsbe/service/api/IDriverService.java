@@ -20,4 +20,6 @@ public interface IDriverService {
     Long update(Long id, Driver driver);
 
     Long delete(Long id);
+
+    DriverDTO getDriverByPersonalNumber(String number);
 }

@@ -3,8 +3,10 @@ package com.tsystem.logisticsbe.service;
 import com.tsystem.logisticsbe.dto.DriverDTO;
 import com.tsystem.logisticsbe.entity.City;
 import com.tsystem.logisticsbe.entity.Driver;
+import com.tsystem.logisticsbe.entity.TransportOrder;
 import com.tsystem.logisticsbe.entity.Truck;
 import com.tsystem.logisticsbe.entity.domain.DriverStatus;
+import com.tsystem.logisticsbe.exception.ApiException;
 import com.tsystem.logisticsbe.exception.DriverNotFoundExeption;
 import com.tsystem.logisticsbe.mapper.DriverMapper;
 import com.tsystem.logisticsbe.repository.CityRepository;
@@ -12,12 +14,12 @@ import com.tsystem.logisticsbe.repository.DriverRepository;
 import com.tsystem.logisticsbe.repository.TruckRepository;
 import com.tsystem.logisticsbe.service.api.IDriverService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
-import java.util.List;
-import java.util.Optional;
+import java.util.*;
 
 @Service
 public class DriverService implements IDriverService {
@@ -92,5 +94,32 @@ public class DriverService implements IDriverService {
         driver.setIsDeleted(LocalDateTime.now());
         driverRepository.saveAndFlush(driver);
         return id;
+    }
+
+    @Override
+    public DriverDTO getDriverByPersonalNumber(String number) {
+        // TODO: 03.11.2021 Replace this request with current user
+        Optional<Driver> driverOptional = driverRepository.getDriverByPersonalNumber(number);
+        if (!driverOptional.isPresent())
+            throw new ApiException(HttpStatus.NOT_FOUND, String.format("There is no driver with personal number = '%s'", number));
+        Driver driver = driverOptional.get();
+
+        //co-drivers
+        Optional<Truck> truckOptional = truckRepository.findById(driver.getTruck().getId());
+        if (!truckOptional.isPresent())
+            throw new ApiException(HttpStatus.NOT_FOUND, "This driver has no current truck");
+        Truck truck = truckOptional.get();
+
+        Set<Driver> coDrivers = new HashSet<>();
+
+        for (Driver coDriver : driverRepository.getDriversByTruck(truck)) {
+            if (!Objects.equals(driver, coDriver))
+                coDrivers.add(coDriver);
+        }
+
+        List<TransportOrder> transportOrders = driver.getTransportOrders();
+
+
+        return driverMapper.mapToDTO(driver);
     }
 }
