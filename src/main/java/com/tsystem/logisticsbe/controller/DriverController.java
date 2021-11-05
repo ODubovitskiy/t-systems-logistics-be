@@ -2,6 +2,7 @@ package com.tsystem.logisticsbe.controller;
 
 import com.tsystem.logisticsbe.controller.api.IDriverController;
 import com.tsystem.logisticsbe.dto.DriverDTO;
+import com.tsystem.logisticsbe.dto.DriverPersonalAccountDTO;
 import com.tsystem.logisticsbe.entity.Driver;
 import com.tsystem.logisticsbe.exception.ApiException;
 import com.tsystem.logisticsbe.mapper.DriverMapper;
@@ -54,7 +55,7 @@ public class DriverController implements IDriverController {
     }
 
     @Override
-    public DriverDTO getDriverByPersonalNumber(String personalNumber) {
+    public DriverPersonalAccountDTO getDriverByPersonalNumber(String personalNumber) {
         if (personalNumber.isEmpty())
             throw new ApiException(HttpStatus.BAD_REQUEST, "Number is incorrect");
         return driverService.getDriverByPersonalNumber(personalNumber);

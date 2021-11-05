@@ -1,6 +1,7 @@
 package com.tsystem.logisticsbe.service.api;
 
 import com.tsystem.logisticsbe.dto.DriverDTO;
+import com.tsystem.logisticsbe.dto.DriverPersonalAccountDTO;
 import com.tsystem.logisticsbe.entity.City;
 import com.tsystem.logisticsbe.entity.Driver;
 import org.springframework.transaction.annotation.Transactional;
@@ -21,5 +22,5 @@ public interface IDriverService {
 
     Long delete(Long id);
 
-    DriverDTO getDriverByPersonalNumber(String number);
+    DriverPersonalAccountDTO getDriverByPersonalNumber(String number);
 }
