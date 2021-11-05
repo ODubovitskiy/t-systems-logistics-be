@@ -46,12 +46,12 @@ public class Driver {
     private City city;
 
     @JoinColumn(name = "current_truck_id")
-    @OneToOne(cascade = {CascadeType.MERGE, CascadeType.DETACH, CascadeType.PERSIST, CascadeType.REFRESH})
+    @ManyToOne(cascade = {CascadeType.MERGE, CascadeType.DETACH, CascadeType.PERSIST, CascadeType.REFRESH})
     private Truck truck;
 
-    @ManyToMany(mappedBy = "drivers")
-    @EqualsAndHashCode.Exclude
+    @ManyToOne(cascade = {CascadeType.MERGE, CascadeType.DETACH, CascadeType.PERSIST, CascadeType.REFRESH})
+    @JoinColumn(name = "current_order_id")
     @JsonBackReference
-    private List<TransportOrder> transportOrders;
+    private TransportOrder transportOrder;
 }
 

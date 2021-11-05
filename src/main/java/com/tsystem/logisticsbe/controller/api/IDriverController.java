@@ -1,6 +1,7 @@
 package com.tsystem.logisticsbe.controller.api;
 
 import com.tsystem.logisticsbe.dto.DriverDTO;
+import com.tsystem.logisticsbe.dto.DriverPersonalAccountDTO;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -23,4 +24,7 @@ public interface IDriverController {
 
     @DeleteMapping("/drivers/{id}")
     Long delete(@PathVariable("id") Long id);
+
+    @GetMapping("/drivers/personal-account/{personalNumber}")
+    DriverPersonalAccountDTO getDriverByPersonalNumber(@PathVariable("personalNumber") String personalNumber);
 }
