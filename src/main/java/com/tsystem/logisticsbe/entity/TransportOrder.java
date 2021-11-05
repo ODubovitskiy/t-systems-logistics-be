@@ -40,10 +40,7 @@ public class TransportOrder {
     @JoinColumn(name = "truck_id")
     private Truck truck;
 
-    @ManyToMany(cascade = {CascadeType.MERGE, CascadeType.DETACH, CascadeType.PERSIST, CascadeType.REFRESH})
-    @JoinTable(name = "transport_order_drivers", joinColumns = {@JoinColumn(name = "transport_order_id")},
-            inverseJoinColumns = {@JoinColumn(name = "driver_id")})
-    @JsonManagedReference
+    @OneToMany(mappedBy = "transportOrder")
     private Set<Driver> drivers;
 
 }

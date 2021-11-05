@@ -41,7 +41,21 @@ public class TransportOrderMapper implements Mapper<TransportOrder, TransportOrd
 
     @Override
     public TransportOrderDTO mapToDTO(TransportOrder entity) {
-        return null;
+        if (entity == null) {
+            return null;
+        }
+
+        TransportOrderDTO dto = new TransportOrderDTO();
+        dto.setNumber(entity.getNumber());
+        dto.setStatus(entity.getStatus());
+        if (entity.getTruck() != null)
+            dto.setTruck(truckMapper.mapToDTO(entity.getTruck()));
+        if (entity.getDrivers() != null)
+            dto.setDrivers(driverMapper.mapToDtoSet(entity.getDrivers()));
+        if (entity.getWayPoints() != null)
+            dto.setWayPoints(wayPointMapper.mapToDtoList(entity.getWayPoints()));
+
+        return dto;
     }
 
     @Override

@@ -40,7 +40,18 @@ public class WayPointMapper implements Mapper<WayPoint, WayPointDTO> {
 
     @Override
     public WayPointDTO mapToDTO(WayPoint entity) {
-        return null;
+        if (entity == null) {
+            return null;
+        }
+
+        WayPointDTO dto = new WayPointDTO();
+
+        dto.setId(entity.getId());
+        dto.setType(entity.getType());
+        dto.setCity(cityMapper.mapToDTO(entity.getCity()));
+        dto.setShipment(shipmentMapper.mapToDTO(entity.getShipment()));
+
+        return dto;
     }
 
     @Override

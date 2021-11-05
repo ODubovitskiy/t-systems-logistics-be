@@ -33,6 +33,7 @@ public class TruckMapper implements Mapper<Truck, TruckDTO> {
         } else {
             Truck truck = new Truck();
             truck.setModel(truckDTO.getModel());
+            truck.setAverageSpeed(truckDTO.getAverageSpeed());
             truck.setId(truckDTO.getId());
             truck.setRegNumber(truckDTO.getRegNumber());
             truck.setDriverShiftSize(truckDTO.getDriverShiftSize());
@@ -49,6 +50,7 @@ public class TruckMapper implements Mapper<Truck, TruckDTO> {
         } else {
             TruckDTO truckDTO = new TruckDTO();
             truckDTO.setModel(truck.getModel());
+            truckDTO.setAverageSpeed(truck.getAverageSpeed());
             truckDTO.setId(truck.getId());
             truckDTO.setRegNumber(truck.getRegNumber());
             truckDTO.setDriverShiftSize(truck.getDriverShiftSize());

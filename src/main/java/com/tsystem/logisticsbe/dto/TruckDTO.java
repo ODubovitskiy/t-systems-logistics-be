@@ -17,10 +17,10 @@ import java.util.concurrent.ThreadLocalRandom;
 public class TruckDTO {
 
     @JsonIgnore
-    private final Float SPEED_FACTOR = (float) ThreadLocalRandom
+    private Float speedFactor = (float) ThreadLocalRandom
             .current()
             .nextInt(6, 10) / 10;
-    private final Float AVERAGE_SPEED = 110 * SPEED_FACTOR;
+    private Float averageSpeed = 110 * speedFactor;
     private String model;
     private Long id;
     @JsonProperty("reg_number")

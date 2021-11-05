@@ -31,13 +31,13 @@ public class TransportOrderService implements ITransportOrderService {
     private final CityMapper cityMapper;
     private final DriverMapper driverMapper;
     private final TruckRepository truckRepository;
-    private final WayPointRepository wayPointRepository;
+    private final ShipmentRepository shipmentRepository;
 
     @Autowired
     public TransportOrderService(TransportOrderRepository transportOrderRepository,
                                  TransportOrderMapper transportOrderMapper, TruckService truckService,
                                  CityRepository cityRepository, DriverRepository driverRepository,
-                                 CityMapper cityMapper, DriverMapper driverMapper, TruckRepository truckRepository, WayPointRepository wayPointRepository) {
+                                 CityMapper cityMapper, DriverMapper driverMapper, TruckRepository truckRepository, ShipmentRepository shipmentRepository) {
         this.transportOrderRepository = transportOrderRepository;
         this.transportOrderMapper = transportOrderMapper;
         this.truckService = truckService;
@@ -46,7 +46,7 @@ public class TransportOrderService implements ITransportOrderService {
         this.cityMapper = cityMapper;
         this.driverMapper = driverMapper;
         this.truckRepository = truckRepository;
-        this.wayPointRepository = wayPointRepository;
+        this.shipmentRepository = shipmentRepository;
     }
 
     @Override
@@ -67,6 +67,7 @@ public class TransportOrderService implements ITransportOrderService {
 
         TransportOrder transportOrder = transportOrderRepository.saveAndFlush(order);
         wayPoints.forEach(wayPoint -> wayPoint.setOrder(transportOrder));
+        drivers.forEach(driver -> driver.setTransportOrder(transportOrder));
 
         return transportOrder;
     }
@@ -78,7 +79,11 @@ public class TransportOrderService implements ITransportOrderService {
             if (!cityOptional.isPresent())
                 throw new ApiException(HttpStatus.NOT_FOUND, String.format("There is no city %s", wayPoint.getCity().getCity()));
             wayPoint.setCity(cityOptional.get());
-            wayPoint.getShipment().setStatus(ShipmentStatus.IN_PROGRESS);
+            Shipment shipment = shipmentRepository.findById(wayPoint.getShipment().getId())
+                    .orElseThrow(() -> new ApiException(HttpStatus.NOT_FOUND, String.format("There is no shipment %s",
+                            wayPoint.getShipment().getName())));
+            shipment.setStatus(ShipmentStatus.IN_PROGRESS);
+            wayPoint.setShipment(shipment);
             wayPoints.add(wayPoint);
         }
         return wayPoints;
@@ -92,7 +97,7 @@ public class TransportOrderService implements ITransportOrderService {
                 throw new ApiException(HttpStatus.BAD_REQUEST, String.format("There is no driver %s", dr.getName()));
             Driver driver = driverOptional.get();
             if (!Objects.equals(truck.getCurrentCity(), driver.getCity()))
-                throw new ApiException(HttpStatus.BAD_REQUEST, "Drivers and the truck are located in diferent cities");
+                throw new ApiException(HttpStatus.BAD_REQUEST, "Drivers and the truck are located in different cities");
             driver.setStatus(DriverStatus.ON_SHIFT);
             driver.setTruck(truck);
             drivers.add(driver);
@@ -143,7 +148,7 @@ public class TransportOrderService implements ITransportOrderService {
         Set<DriverDTO> driversForOrder = new HashSet<>();
 
         for (TruckDTO truckDTO : trucksForOrder) {
-            Integer travelTime = (int) (routeLength / truckDTO.getAVERAGE_SPEED());
+            Integer travelTime = (int) (routeLength / truckDTO.getAverageSpeed());
             City city = cityMapper.mapToEntity(truckDTO.getCityDTO());
             HashSet<Driver> drivers = driverRepository.getDriversForOrder(travelTime, city);
             driversForOrder.addAll(driverMapper.mapToDtoSet(drivers));

@@ -26,6 +26,9 @@ public class Truck {
     @Column(name = "reg_number", nullable = false, unique = true)
     private String regNumber;
 
+    @Column(name = "average_Speed", nullable = false)
+    private Float averageSpeed;
+
     @Column(name = "driver_shift_size")
     private Integer driverShiftSize;
 

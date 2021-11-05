@@ -1,5 +1,6 @@
 package com.tsystem.logisticsbe.dto;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.tsystem.logisticsbe.entity.domain.TransportOrderStatus;
 import lombok.*;
@@ -15,7 +16,7 @@ import java.util.UUID;
 @NoArgsConstructor
 public class TransportOrderDTO {
 
-    private final String number = "ORD-".concat(
+    private String number = "ORD-".concat(
             UUID.randomUUID()
                     .toString()
                     .substring(0, 5)
