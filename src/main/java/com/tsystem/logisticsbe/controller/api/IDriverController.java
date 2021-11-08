@@ -2,9 +2,14 @@ package com.tsystem.logisticsbe.controller.api;
 
 import com.tsystem.logisticsbe.dto.DriverDTO;
 import com.tsystem.logisticsbe.dto.DriverPersonalAccountDTO;
+import com.tsystem.logisticsbe.entity.City;
+import com.tsystem.logisticsbe.entity.Driver;
 import org.springframework.web.bind.annotation.*;
 
+import javax.websocket.server.PathParam;
 import java.util.List;
+import java.util.Optional;
+import java.util.Set;
 
 @RequestMapping("api")
 @CrossOrigin(origins = "http://localhost:8080")
@@ -27,4 +32,7 @@ public interface IDriverController {
 
     @GetMapping("/drivers/personal-account/{personalNumber}")
     DriverPersonalAccountDTO getDriverByPersonalNumber(@PathVariable("personalNumber") String personalNumber);
+
+    @GetMapping("/drivers/city")
+    Set<DriverDTO> findDriversByCityId(@RequestParam(name = "id") Optional<String> id);
 }

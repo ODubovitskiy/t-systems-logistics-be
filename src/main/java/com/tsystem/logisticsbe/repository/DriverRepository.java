@@ -28,8 +28,11 @@ public interface DriverRepository extends JpaRepository<Driver, Long> {
 
     List<Driver> getAllByTruckId(Long id);
 
-    Optional<Driver> getDriverByPersonalNumber(String number);
+    Optional<Driver> getDriverByPersonalNumberAndIsDeletedNull(String number);
 
     Set<Driver> getDriversByTruck(Truck truck);
 
+    Set<Driver> findDriversByCityId(Long cityId);
+
+    Optional<Driver> findDriverByIdAndIsDeletedNull(Long id);
 }

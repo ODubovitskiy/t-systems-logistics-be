@@ -26,4 +26,6 @@ public interface TruckRepository extends JpaRepository<Truck, Long> {
                     "AND t.current_city_id IN (:citiesToStart)")
     Optional<Set<Truck>> getTrucksForOrder(@Param("citiesToStart") List<City> citiesToStart, @Param("weight")  Integer weight);
 
+
+    Optional<Truck> findTruckByIdAndIsDeletedNull(Long id);
 }

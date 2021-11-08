@@ -52,13 +52,13 @@ public class TruckService implements ITruckService {
     }
 
     public TruckDTO getByID(Long id) {
-        Truck entity = truckRepository.findById(id)
+        Truck entity = truckRepository.findTruckByIdAndIsDeletedNull(id)
                 .orElseThrow(() -> new TruckNotFoundException(String.format("Truck with id %s doesn't exist", id)));
         return truckMapper.mapToDTO(entity);
     }
 
     public Long update(Long id, Truck truck) {
-        Optional<Truck> truckOptional = truckRepository.findById(id);
+        Optional<Truck> truckOptional = truckRepository.findTruckByIdAndIsDeletedNull(id);
         if (!truckOptional.isPresent()) {
             throw new TruckNotFoundException(String.format("Truck with id = %s doesn't exist", id));
         }
@@ -72,7 +72,7 @@ public class TruckService implements ITruckService {
     }
 
     public Long delete(Long id) {
-        Truck truck = truckRepository.findById(id)
+        Truck truck = truckRepository.findTruckByIdAndIsDeletedNull(id)
                 .orElseThrow(() -> new TruckNotFoundException(String.format("Truck with id = %s doesn't exist", id)));
         List<Driver> drivers = driverRepository.getAllByTruckId(truck.getId());
         drivers.forEach(driver -> {

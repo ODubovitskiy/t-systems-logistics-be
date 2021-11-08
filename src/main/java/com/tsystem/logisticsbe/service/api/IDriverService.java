@@ -7,6 +7,7 @@ import com.tsystem.logisticsbe.entity.Driver;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
+import java.util.Set;
 
 public interface IDriverService {
 
@@ -23,4 +24,6 @@ public interface IDriverService {
     Long delete(Long id);
 
     DriverPersonalAccountDTO getDriverByPersonalNumber(String number);
+
+   Set<DriverDTO> findDriversByCityId(Long  city);
 }

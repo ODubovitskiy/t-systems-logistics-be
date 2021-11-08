@@ -23,6 +23,7 @@ import org.springframework.transaction.annotation.Transactional;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
+import java.util.Set;
 
 @Service
 public class DriverService implements IDriverService {
@@ -65,7 +66,7 @@ public class DriverService implements IDriverService {
 
     @Override
     public DriverDTO getById(Long id) {
-        Driver driver = driverRepository.findById(id)
+        Driver driver = driverRepository.findDriverByIdAndIsDeletedNull(id)
                 .orElseThrow(() -> {
                     throw new DriverNotFoundExeption(String.format("Driver with id = %s doesn't exist.", id));
                 });
@@ -74,7 +75,7 @@ public class DriverService implements IDriverService {
 
     @Override
     public Long update(Long id, Driver driver) {
-        Optional<Driver> optionalDriver = driverRepository.findById(id);
+        Optional<Driver> optionalDriver = driverRepository.findDriverByIdAndIsDeletedNull(id);
         if (!optionalDriver.isPresent())
             throw new DriverNotFoundExeption(String.format("Driver with id = %s doesn't exist", id));
         Driver driverToUpdate = optionalDriver.get();
@@ -92,7 +93,7 @@ public class DriverService implements IDriverService {
 
     @Override
     public Long delete(Long id) {
-        Optional<Driver> optionalDriver = driverRepository.findById(id);
+        Optional<Driver> optionalDriver = driverRepository.findDriverByIdAndIsDeletedNull(id);
         if (!optionalDriver.isPresent())
             throw new DriverNotFoundExeption(String.format("Driver with id = %s doesn't exist", id));
         Driver driver = optionalDriver.get();
@@ -106,7 +107,7 @@ public class DriverService implements IDriverService {
         DriverPersonalAccountDTO driverPersonalAccountDTO = new DriverPersonalAccountDTO();
 
         // TODO: 03.11.2021 Replace this request with the current user
-        Optional<Driver> driverOptional = driverRepository.getDriverByPersonalNumber(number);
+        Optional<Driver> driverOptional = driverRepository.getDriverByPersonalNumberAndIsDeletedNull(number);
         if (!driverOptional.isPresent())
             throw new ApiException(HttpStatus.NOT_FOUND, String.format("There is no driver with personal number = '%s'", number));
         Driver driver = driverOptional.get();
@@ -121,5 +122,10 @@ public class DriverService implements IDriverService {
         driver.setTransportOrder(new TransportOrder());
         driverPersonalAccountDTO.setTransportOrder(transportOrderMapper.mapToDTO(transportOrder));
         return driverPersonalAccountDTO;
+    }
+
+    @Override
+    public Set<DriverDTO> findDriversByCityId(Long  cityId) {
+        return driverMapper.mapToDtoSet(driverRepository.findDriversByCityId(cityId));
     }
 }

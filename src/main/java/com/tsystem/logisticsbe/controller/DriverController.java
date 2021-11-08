@@ -14,6 +14,8 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
 
 import java.util.List;
+import java.util.Optional;
+import java.util.Set;
 
 @RestController
 public class DriverController implements IDriverController {
@@ -59,5 +61,13 @@ public class DriverController implements IDriverController {
         if (personalNumber.isEmpty())
             throw new ApiException(HttpStatus.BAD_REQUEST, "Number is incorrect");
         return driverService.getDriverByPersonalNumber(personalNumber);
+    }
+
+    @Override
+    public Set<DriverDTO> findDriversByCityId(Optional<String> city) {
+        Long cityId = Long.valueOf(city.orElseThrow(
+                () -> new ApiException(HttpStatus.BAD_REQUEST, "City is incorrect"))
+        );
+        return driverService.findDriversByCityId(cityId);
     }
 }

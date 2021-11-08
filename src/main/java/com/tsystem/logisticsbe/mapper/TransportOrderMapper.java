@@ -27,6 +27,7 @@ public class TransportOrderMapper implements Mapper<TransportOrder, TransportOrd
 
         TransportOrder order = new TransportOrder();
 
+        order.setId(dto.getId());
         order.setNumber(dto.getNumber());
         order.setStatus(dto.getStatus());
         if (dto.getTruck() != null)
@@ -46,6 +47,7 @@ public class TransportOrderMapper implements Mapper<TransportOrder, TransportOrd
         }
 
         TransportOrderDTO dto = new TransportOrderDTO();
+        dto.setId(entity.getId());
         dto.setNumber(entity.getNumber());
         dto.setStatus(entity.getStatus());
         if (entity.getTruck() != null)

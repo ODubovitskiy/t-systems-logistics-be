@@ -20,6 +20,7 @@ public class TruckDTO {
     private Float speedFactor = (float) ThreadLocalRandom
             .current()
             .nextInt(6, 10) / 10;
+    @JsonProperty("average_speed")
     private Float averageSpeed = 110 * speedFactor;
     private String model;
     private Long id;
