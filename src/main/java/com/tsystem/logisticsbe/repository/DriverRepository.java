@@ -35,4 +35,7 @@ public interface DriverRepository extends JpaRepository<Driver, Long> {
     Set<Driver> findDriversByCityId(Long cityId);
 
     Optional<Driver> findDriverByIdAndIsDeletedNull(Long id);
+
+    Optional<Driver> getDriverByAppUserId(Long id);
+
 }

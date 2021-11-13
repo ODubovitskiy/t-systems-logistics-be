@@ -128,4 +128,10 @@ public class DriverService implements IDriverService {
     public Set<DriverDTO> findDriversByCityId(Long  cityId) {
         return driverMapper.mapToDtoSet(driverRepository.findDriversByCityId(cityId));
     }
+
+    @Override
+    public Driver getDriverByAppUSerId(Long id) {
+        return driverRepository.getDriverByAppUserId(id)
+                .orElseThrow(() -> new ApiException(400, "Driver not found"));
+    }
 }

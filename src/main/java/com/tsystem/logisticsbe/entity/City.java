@@ -11,7 +11,6 @@ import javax.persistence.*;
 @Entity
 @EqualsAndHashCode
 @Table(name = "city")
-@ToString
 public class City {
 
     @Id
