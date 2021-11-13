@@ -23,4 +23,7 @@ public interface DriverRepository extends JpaRepository<Driver, Long> {
     Optional<List<Driver>> getDriversForOrder(Integer travelTime);
 
     List<Driver> getAllByTruckId(Long id);
+
+    Optional<Driver> getDriverByAppUserId(Long id);
+
 }

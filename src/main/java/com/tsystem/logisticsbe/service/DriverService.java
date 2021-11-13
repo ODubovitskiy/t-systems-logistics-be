@@ -99,4 +99,10 @@ public class DriverService implements IDriverService {
 
         return driverMapper.mapToDtoList(drivers);
     }
+
+    @Override
+    public Driver getDriverByAppUSerId(Long id) {
+        return driverRepository.getDriverByAppUserId(id)
+                .orElseThrow(() -> new ApiException(400, "Driver not found"));
+    }
 }

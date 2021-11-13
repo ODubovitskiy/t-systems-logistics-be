@@ -11,14 +11,17 @@ import org.springframework.stereotype.Component;
 public class JWTConfigurer extends SecurityConfigurerAdapter<DefaultSecurityFilterChain, HttpSecurity> {
 
     private final JWTTokenFilter jwtTokenFilter;
+    private final CorsFilter corsFilter;
 
     @Autowired
-    public JWTConfigurer(JWTTokenFilter jwtTokenFilter) {
+    public JWTConfigurer(JWTTokenFilter jwtTokenFilter, CorsFilter corsFilter) {
         this.jwtTokenFilter = jwtTokenFilter;
+        this.corsFilter = corsFilter;
     }
 
     @Override
     public void configure(HttpSecurity builder) throws Exception {
         builder.addFilterBefore(jwtTokenFilter, UsernamePasswordAuthenticationFilter.class);
+        builder.addFilterBefore(corsFilter, UsernamePasswordAuthenticationFilter.class);
     }
 }

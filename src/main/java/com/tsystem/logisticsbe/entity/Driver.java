@@ -1,6 +1,7 @@
 package com.tsystem.logisticsbe.entity;
 
 import com.tsystem.logisticsbe.entity.domain.DriverStatus;
+import com.tsystem.logisticsbe.security.AppUser;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -51,5 +52,9 @@ public class Driver {
 
     @ManyToMany(mappedBy = "drivers")
     private List<TransportOrder> transportOrders;
+
+    @JoinColumn(name = "app_user_id")
+    @OneToOne(cascade = {CascadeType.MERGE, CascadeType.DETACH, CascadeType.PERSIST, CascadeType.REFRESH})
+    private AppUser appUser;
 }
 

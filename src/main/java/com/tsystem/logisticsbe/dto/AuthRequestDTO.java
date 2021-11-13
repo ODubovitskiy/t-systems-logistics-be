@@ -7,9 +7,7 @@ import lombok.Setter;
 @Setter
 public class AuthRequestDTO {
 
-
     private String email;
     private String password;
-
 
 }
