@@ -12,9 +12,12 @@ import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.stereotype.Component;
 
 import javax.annotation.PostConstruct;
+import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
 import java.util.Base64;
 import java.util.Date;
+import java.util.HashMap;
+import java.util.Map;
 
 @Component
 public class JWTTokenProvider {
@@ -81,5 +84,14 @@ public class JWTTokenProvider {
         return request.getHeader(authorizationHeader);
     }
 
-
+    public String geTokenFromCookies(HttpServletRequest request) {
+        Map<String, String> result = new HashMap<>();
+        Cookie[] cookies = request.getCookies();
+        if (cookies != null) {
+            for (Cookie cookie : cookies) {
+                result.put(cookie.getName(), cookie.getValue());
+            }
+        }
+        return result.get("token");
+    }
 }

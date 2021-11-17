@@ -10,6 +10,7 @@ import javax.servlet.FilterChain;
 import javax.servlet.ServletException;
 import javax.servlet.ServletRequest;
 import javax.servlet.ServletResponse;
+import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
@@ -28,6 +29,7 @@ public class JWTTokenFilter extends GenericFilterBean {
     @Override
     public void doFilter(ServletRequest servletRequest, ServletResponse servletResponse, FilterChain filterChain) throws IOException, ServletException {
         String token = jwtTokenProvider.resolveToken((HttpServletRequest) servletRequest);
+//        String token = jwtTokenProvider.geTokenFromCookies((HttpServletRequest) servletRequest);
         try {
             if (token != null && jwtTokenProvider.validateToken(token)) {
                 Authentication authentication = jwtTokenProvider.getAuthentication(token);
@@ -40,6 +42,14 @@ public class JWTTokenFilter extends GenericFilterBean {
             ((HttpServletResponse) servletResponse).sendError(e.getStatus().value());
             throw new JWTAuthenticationException("Your token is invalid");
         }
+
+        Cookie cookie = new Cookie("token", token);
+        cookie.setPath("/");
+        cookie.setSecure(true);
+        cookie.setHttpOnly(true);
+
+        ((HttpServletResponse) servletResponse).addCookie(cookie);
+
         filterChain.doFilter(servletRequest, servletResponse);
     }
 }

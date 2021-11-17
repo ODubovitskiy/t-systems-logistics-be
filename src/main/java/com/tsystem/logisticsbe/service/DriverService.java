@@ -11,12 +11,17 @@ import com.tsystem.logisticsbe.exception.ApiException;
 import com.tsystem.logisticsbe.exception.DriverNotFoundExeption;
 import com.tsystem.logisticsbe.mapper.DriverMapper;
 import com.tsystem.logisticsbe.mapper.TransportOrderMapper;
+import com.tsystem.logisticsbe.repository.AppUserRepository;
 import com.tsystem.logisticsbe.repository.CityRepository;
 import com.tsystem.logisticsbe.repository.DriverRepository;
 import com.tsystem.logisticsbe.repository.TruckRepository;
+import com.tsystem.logisticsbe.security.AppUser;
 import com.tsystem.logisticsbe.service.api.IDriverService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
+import org.springframework.security.core.context.SecurityContext;
+import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -33,15 +38,17 @@ public class DriverService implements IDriverService {
     private final TruckRepository truckRepository;
     private final DriverMapper driverMapper;
     private final TransportOrderMapper transportOrderMapper;
+    private final AppUserRepository appUserRepository;
 
     @Autowired
     public DriverService(DriverRepository driverRepository, CityRepository cityRepository,
-                         TruckRepository truckRepository, DriverMapper driverMapper, TransportOrderMapper transportOrderMapper) {
+                         TruckRepository truckRepository, DriverMapper driverMapper, TransportOrderMapper transportOrderMapper, AppUserRepository appUserRepository) {
         this.driverRepository = driverRepository;
         this.cityRepository = cityRepository;
         this.truckRepository = truckRepository;
         this.driverMapper = driverMapper;
         this.transportOrderMapper = transportOrderMapper;
+        this.appUserRepository = appUserRepository;
     }
 
     @Override
@@ -106,11 +113,17 @@ public class DriverService implements IDriverService {
     public DriverPersonalAccountDTO getDriverByPersonalNumber(String number) {
         DriverPersonalAccountDTO driverPersonalAccountDTO = new DriverPersonalAccountDTO();
 
-        // TODO: 03.11.2021 Replace this request with the current user
-        Optional<Driver> driverOptional = driverRepository.getDriverByPersonalNumberAndIsDeletedNull(number);
-        if (!driverOptional.isPresent())
-            throw new ApiException(HttpStatus.NOT_FOUND, String.format("There is no driver with personal number = '%s'", number));
-        Driver driver = driverOptional.get();
+        SecurityContext securityContext = SecurityContextHolder.getContext();
+        UserDetails principal = (UserDetails) securityContext.getAuthentication().getPrincipal();
+
+        AppUser appUser = appUserRepository.findByEmail(principal.getUsername())
+                .orElseThrow(() -> {
+                    throw new ApiException(HttpStatus.NOT_FOUND, String.format("User with email '%s' doesn't exist", principal.getUsername()));
+                });
+        Driver driver = driverRepository.getDriverByAppUserId(appUser.getId())
+                .orElseThrow(() -> {
+                    throw new ApiException(HttpStatus.NOT_FOUND, String.format("Driver with email '%s' doesn't exist", principal.getUsername()));
+                });;
 
         TransportOrder transportOrder = driver.getTransportOrder();
         driverPersonalAccountDTO.setDriver(driverMapper.mapToDTO(driver));
@@ -125,13 +138,13 @@ public class DriverService implements IDriverService {
     }
 
     @Override
-    public Set<DriverDTO> findDriversByCityId(Long  cityId) {
+    public Set<DriverDTO> findDriversByCityId(Long cityId) {
         return driverMapper.mapToDtoSet(driverRepository.findDriversByCityId(cityId));
     }
 
     @Override
     public Driver getDriverByAppUSerId(Long id) {
         return driverRepository.getDriverByAppUserId(id)
-                .orElseThrow(() -> new ApiException(400, "Driver not found"));
+                .orElseThrow(() -> new ApiException(HttpStatus.NOT_FOUND, "Driver not found"));
     }
 }
