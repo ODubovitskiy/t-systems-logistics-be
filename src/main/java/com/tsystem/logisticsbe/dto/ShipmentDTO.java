@@ -18,5 +18,5 @@ public class ShipmentDTO {
     private ShipmentStatus status;
     private String name;
     private Integer weight;
-    private String number = String.valueOf(new Random().nextInt(10000));
+    private String number;
 }
