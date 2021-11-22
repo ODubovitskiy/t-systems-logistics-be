@@ -11,7 +11,7 @@ import java.util.Set;
 public interface ITruckService {
 
     @Transactional
-    public Long create(Truck truck);
+    public TruckDTO create(Truck truck);
 
     public List<TruckDTO> getAll();
 

@@ -5,8 +5,9 @@ import com.tsystem.logisticsbe.entity.City;
 import com.tsystem.logisticsbe.entity.Driver;
 import com.tsystem.logisticsbe.entity.Truck;
 import com.tsystem.logisticsbe.entity.domain.DriverStatus;
+import com.tsystem.logisticsbe.entity.domain.TruckStatus;
 import com.tsystem.logisticsbe.exception.ApiException;
-import com.tsystem.logisticsbe.exception.TruckNotFoundException;
+import com.tsystem.logisticsbe.kafka.CustomKafkaProducer;
 import com.tsystem.logisticsbe.mapper.TruckMapper;
 import com.tsystem.logisticsbe.repository.CityRepository;
 import com.tsystem.logisticsbe.repository.DriverRepository;
@@ -29,21 +30,26 @@ public class TruckService implements ITruckService {
     private final CityRepository cityRepository;
     private final TruckMapper truckMapper;
     private final DriverRepository driverRepository;
+    private final CustomKafkaProducer customKafkaProducer;
 
     @Autowired
     public TruckService(TruckRepository truckRepository, CityRepository cityRepository,
-                        TruckMapper truckMapper, DriverRepository driverRepository) {
+                        TruckMapper truckMapper, DriverRepository driverRepository, CustomKafkaProducer customKafkaProducer) {
         this.truckRepository = truckRepository;
         this.cityRepository = cityRepository;
         this.truckMapper = truckMapper;
         this.driverRepository = driverRepository;
+        this.customKafkaProducer = customKafkaProducer;
     }
 
-    public Long create(Truck truck) {
+    public TruckDTO create(Truck truck) {
+        if (truckRepository.findByRegNumberAndIsDeletedNull(truck.getRegNumber()) != null)
+            throw new ApiException(HttpStatus.BAD_REQUEST, "Truck with this registration numver already exist");
         City city = cityRepository.getById(truck.getCurrentCity().getId());
         truck.setCurrentCity(city);
 
-        return truckRepository.saveAndFlush(truck).getId();
+        TruckDTO truckDTO = truckMapper.mapToDTO(truckRepository.saveAndFlush(truck));
+        return truckDTO;
     }
 
     public List<TruckDTO> getAll() {
@@ -53,17 +59,25 @@ public class TruckService implements ITruckService {
 
     public TruckDTO getByID(Long id) {
         Truck entity = truckRepository.findTruckByIdAndIsDeletedNull(id)
-                .orElseThrow(() -> new TruckNotFoundException(String.format("Truck with id %s doesn't exist", id)));
+                .orElseThrow(() -> new ApiException(HttpStatus.NOT_FOUND, String.format("Truck with id %s doesn't exist", id)));
         return truckMapper.mapToDTO(entity);
     }
 
     public Long update(Long id, Truck truck) {
         Optional<Truck> truckOptional = truckRepository.findTruckByIdAndIsDeletedNull(id);
         if (!truckOptional.isPresent()) {
-            throw new TruckNotFoundException(String.format("Truck with id = %s doesn't exist", id));
+            throw new ApiException(HttpStatus.NOT_FOUND, String.format("Truck with id = %s doesn't exist", id));
         }
         Truck entityToUpdate = truckOptional.get();
         City city = cityRepository.getById(truck.getCurrentCity().getId());
+
+        if (truck.getStatus() == TruckStatus.BROKEN) {
+            List<Driver> drivers = driverRepository.getAllByTruckId(truck.getId());
+            drivers.forEach(driver -> {
+                driver.setStatus(DriverStatus.REST);
+                driver.setTruck(null);
+            });
+        }
         truckMapper.updateEntity(truck, entityToUpdate);
         entityToUpdate.setCurrentCity(city);
         truckRepository.saveAndFlush(entityToUpdate);
@@ -73,7 +87,9 @@ public class TruckService implements ITruckService {
 
     public Long delete(Long id) {
         Truck truck = truckRepository.findTruckByIdAndIsDeletedNull(id)
-                .orElseThrow(() -> new TruckNotFoundException(String.format("Truck with id = %s doesn't exist", id)));
+                .orElseThrow(() -> new ApiException(HttpStatus.NOT_FOUND, String.format("Truck with id = %s doesn't exist", id)));
+        if (truck.getStatus() == TruckStatus.WORKING)
+            throw new ApiException(HttpStatus.BAD_REQUEST, "You cannot delete a working truck");
         List<Driver> drivers = driverRepository.getAllByTruckId(truck.getId());
         drivers.forEach(driver -> {
             if (driver.getStatus() == DriverStatus.DRIVING | driver.getStatus() == DriverStatus.ON_SHIFT)

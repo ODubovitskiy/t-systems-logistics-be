@@ -30,9 +30,9 @@ public class DriverController implements IDriverController {
     }
 
     @Override
-    public String create(DriverDTO driverDTO) {
-        Driver driver = driverMapper.mapToEntity(driverDTO);
-        return driverService.create(driver);
+    public DriverDTO create(DriverDTO driverDTO) {
+        Driver driverEntity = driverMapper.mapToEntity(driverDTO);
+        return driverService.create(driverEntity);
     }
 
     @Override

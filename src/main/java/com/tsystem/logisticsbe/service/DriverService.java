@@ -8,7 +8,7 @@ import com.tsystem.logisticsbe.entity.TransportOrder;
 import com.tsystem.logisticsbe.entity.Truck;
 import com.tsystem.logisticsbe.entity.domain.DriverStatus;
 import com.tsystem.logisticsbe.exception.ApiException;
-import com.tsystem.logisticsbe.exception.DriverNotFoundExeption;
+import com.tsystem.logisticsbe.kafka.CustomKafkaProducer;
 import com.tsystem.logisticsbe.mapper.DriverMapper;
 import com.tsystem.logisticsbe.mapper.TransportOrderMapper;
 import com.tsystem.logisticsbe.repository.AppUserRepository;
@@ -39,43 +39,44 @@ public class DriverService implements IDriverService {
     private final DriverMapper driverMapper;
     private final TransportOrderMapper transportOrderMapper;
     private final AppUserRepository appUserRepository;
+    private final CustomKafkaProducer customKafkaProducer;
+
 
     @Autowired
     public DriverService(DriverRepository driverRepository, CityRepository cityRepository,
-                         TruckRepository truckRepository, DriverMapper driverMapper, TransportOrderMapper transportOrderMapper, AppUserRepository appUserRepository) {
+                         TruckRepository truckRepository, DriverMapper driverMapper, TransportOrderMapper transportOrderMapper, AppUserRepository appUserRepository, CustomKafkaProducer customKafkaProducer) {
         this.driverRepository = driverRepository;
         this.cityRepository = cityRepository;
         this.truckRepository = truckRepository;
         this.driverMapper = driverMapper;
         this.transportOrderMapper = transportOrderMapper;
         this.appUserRepository = appUserRepository;
+        this.customKafkaProducer = customKafkaProducer;
     }
 
     @Override
     @Transactional
-    public String create(Driver driver) {
+    public DriverDTO create(Driver driver) {
         City city = cityRepository.getById(driver.getCity().getId());
-        Truck truck = truckRepository.getById(driver.getTruck().getId());
         driver.setCity(city);
-        if (driver.getStatus() != DriverStatus.REST)
-            driver.setTruck(truck);
-        else
-            driver.setTruck(null);
-        driverRepository.save(driver);
+        driver.setTruck(null);
+        DriverDTO driverDTO = driverMapper.mapToDTO(driverRepository.save(driver));
 
-        return String.format("%s %s", driver.getName(), driver.getLastName());
+        return driverDTO;
     }
 
     @Override
     public List<DriverDTO> getAll() {
-        return driverMapper.mapToDtoList(driverRepository.findByIsDeletedNull());
+        List<DriverDTO> driverDTOList = driverMapper.mapToDtoList(driverRepository.findByIsDeletedNull());
+
+        return driverDTOList;
     }
 
     @Override
     public DriverDTO getById(Long id) {
         Driver driver = driverRepository.findDriverByIdAndIsDeletedNull(id)
                 .orElseThrow(() -> {
-                    throw new DriverNotFoundExeption(String.format("Driver with id = %s doesn't exist.", id));
+                    throw new ApiException(HttpStatus.NOT_FOUND, String.format("Driver with id = %s doesn't exist.", id));
                 });
         return driverMapper.mapToDTO(driver);
     }
@@ -84,7 +85,7 @@ public class DriverService implements IDriverService {
     public Long update(Long id, Driver driver) {
         Optional<Driver> optionalDriver = driverRepository.findDriverByIdAndIsDeletedNull(id);
         if (!optionalDriver.isPresent())
-            throw new DriverNotFoundExeption(String.format("Driver with id = %s doesn't exist", id));
+            throw new ApiException(HttpStatus.NOT_FOUND, String.format("Driver with id = %s doesn't exist", id));
         Driver driverToUpdate = optionalDriver.get();
         driverMapper.updateEntity(driver, driverToUpdate);
         City city = cityRepository.getById(driver.getCity().getId());
@@ -102,10 +103,11 @@ public class DriverService implements IDriverService {
     public Long delete(Long id) {
         Optional<Driver> optionalDriver = driverRepository.findDriverByIdAndIsDeletedNull(id);
         if (!optionalDriver.isPresent())
-            throw new DriverNotFoundExeption(String.format("Driver with id = %s doesn't exist", id));
+            throw new ApiException(HttpStatus.NOT_FOUND, String.format("Driver with id = %s doesn't exist", id));
         Driver driver = optionalDriver.get();
         driver.setIsDeleted(LocalDateTime.now());
         driverRepository.saveAndFlush(driver);
+
         return id;
     }
 
@@ -123,7 +125,7 @@ public class DriverService implements IDriverService {
         Driver driver = driverRepository.getDriverByAppUserId(appUser.getId())
                 .orElseThrow(() -> {
                     throw new ApiException(HttpStatus.NOT_FOUND, String.format("Driver with email '%s' doesn't exist", principal.getUsername()));
-                });;
+                });
 
         TransportOrder transportOrder = driver.getTransportOrder();
         driverPersonalAccountDTO.setDriver(driverMapper.mapToDTO(driver));

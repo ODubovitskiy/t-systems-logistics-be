@@ -15,7 +15,7 @@ public interface IDriverController {
 
     @PostMapping("/drivers")
     @PreAuthorize("hasAnyAuthority('permission:write')")
-    String create(@RequestBody DriverDTO driverDTO);
+    DriverDTO create(@RequestBody DriverDTO driverDTO);
 
     @GetMapping("/drivers")
     @PreAuthorize("hasAnyAuthority('permission:read')")

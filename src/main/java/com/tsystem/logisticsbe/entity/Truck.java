@@ -1,10 +1,12 @@
 package com.tsystem.logisticsbe.entity;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
 import com.tsystem.logisticsbe.entity.domain.TruckStatus;
 import lombok.*;
 import org.hibernate.annotations.ColumnDefault;
 
 import javax.persistence.*;
+import java.io.Serializable;
 import java.time.LocalDateTime;
 
 @Getter
@@ -16,7 +18,7 @@ import java.time.LocalDateTime;
 @ToString
 public class Truck {
 
-    @Column(name = "model", nullable = false)
+    @Column(name = "model")
     private String model;
 
     @Id
@@ -26,20 +28,20 @@ public class Truck {
     @Column(name = "reg_number", nullable = false, unique = true)
     private String regNumber;
 
-    @Column(name = "average_Speed", nullable = false)
+    @Column(name = "average_Speed")
     private Float averageSpeed;
 
     @Column(name = "driver_shift_size")
     private Integer driverShiftSize;
 
-    @Column(name = "load_capacity", nullable = false)
+    @Column(name = "load_capacity")
     private Integer loadCapacity;
 
     @Enumerated(EnumType.STRING)
     @Column(name = "status")
     private TruckStatus status;
 
-    @Column(name = "is_available", nullable = false)
+    @Column(name = "is_available")
     @ColumnDefault("TRUE")
     private boolean isAvailable = true;
 

@@ -91,6 +91,11 @@ public class TransportOrderService implements ITransportOrderService {
 
     private Set<Driver> handleDriversForOrder(TransportOrder order, Truck truck) {
         Set<Driver> drivers = new HashSet<>();
+        if (order.getDrivers().size() > truck.getDriverShiftSize())
+            throw new ApiException(HttpStatus.BAD_REQUEST, String.format("Quantity of drivers cannot be mo than %s",
+                    truck.getDriverShiftSize()));
+        int counter = 0;
+
         for (Driver dr : order.getDrivers()) {
             Optional<Driver> driverOptional = driverRepository.findById(dr.getId());
             if (!driverOptional.isPresent())
@@ -98,9 +103,15 @@ public class TransportOrderService implements ITransportOrderService {
             Driver driver = driverOptional.get();
             if (!Objects.equals(truck.getCurrentCity(), driver.getCity()))
                 throw new ApiException(HttpStatus.BAD_REQUEST, "Drivers and the truck are located in different cities");
-            driver.setStatus(DriverStatus.ON_SHIFT);
+
+            if (counter == 0)
+                driver.setStatus(DriverStatus.DRIVING);
+            else
+                driver.setStatus(DriverStatus.ON_SHIFT);
             driver.setTruck(truck);
             drivers.add(driver);
+
+            counter++;
         }
         return drivers;
     }

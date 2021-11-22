@@ -14,7 +14,7 @@ public interface ITruckController {
 
     @PostMapping("/trucks")
     @ResponseStatus(HttpStatus.CREATED)
-    Long create(@RequestBody TruckDTO truckDTO);
+    TruckDTO create(@RequestBody TruckDTO truckDTO);
 
     @GetMapping("/trucks")
     List<TruckDTO> getAll();

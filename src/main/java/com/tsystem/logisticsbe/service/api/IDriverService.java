@@ -11,7 +11,7 @@ import java.util.Set;
 public interface IDriverService {
 
     @Transactional
-    String create(Driver driver);
+    DriverDTO create(Driver driver);
 
     List<DriverDTO> getAll();
 

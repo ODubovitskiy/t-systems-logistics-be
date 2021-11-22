@@ -27,7 +27,7 @@ public class TruckController implements ITruckController {
         this.truckMapper = truckMapper;
     }
 
-    public Long create(@RequestBody TruckDTO truckDTO) {
+    public TruckDTO create(@RequestBody TruckDTO truckDTO) {
         TruckValidation.verifyData(truckDTO);
         Truck truck = truckMapper.mapToEntity(truckDTO);
         return truckService.create(truck);

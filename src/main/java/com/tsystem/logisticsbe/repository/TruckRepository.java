@@ -28,4 +28,6 @@ public interface TruckRepository extends JpaRepository<Truck, Long> {
 
 
     Optional<Truck> findTruckByIdAndIsDeletedNull(Long id);
+
+    Truck findByRegNumberAndIsDeletedNull(String regNumber);
 }
