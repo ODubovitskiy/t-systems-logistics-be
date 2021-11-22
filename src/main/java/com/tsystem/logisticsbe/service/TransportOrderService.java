@@ -172,4 +172,11 @@ public class TransportOrderService implements ITransportOrderService {
 
         return preOrderDTO;
     }
+
+    @Override
+    public TransportOrderDTO getById(Long id) {
+        TransportOrder transportOrder = transportOrderRepository.findById(id)
+                .orElseThrow(() -> new ApiException(HttpStatus.NOT_FOUND, String.format("There is no ordrder with id = %s", id)));
+        return transportOrderMapper.mapToDTO(transportOrder);
+    }
 }

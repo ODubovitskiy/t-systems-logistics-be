@@ -14,6 +14,7 @@ public class ShipmentMapper implements Mapper<Shipment, ShipmentDTO> {
 
         Shipment shipment = new Shipment();
         shipment.setId(dto.getId());
+        shipment.setNumber(dto.getNumber());
         shipment.setName(dto.getName());
         shipment.setWeight(dto.getWeight());
         shipment.setStatus(dto.getStatus());
@@ -30,6 +31,7 @@ public class ShipmentMapper implements Mapper<Shipment, ShipmentDTO> {
         ShipmentDTO shipmentDTO = new ShipmentDTO();
 
         shipmentDTO.setId(entity.getId());
+        shipmentDTO.setNumber(entity.getNumber());
         shipmentDTO.setName(entity.getName());
         shipmentDTO.setWeight(entity.getWeight());
         shipmentDTO.setStatus(entity.getStatus());

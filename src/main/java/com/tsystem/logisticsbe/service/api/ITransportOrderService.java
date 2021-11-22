@@ -16,4 +16,6 @@ public interface ITransportOrderService {
     TransportOrder create(TransportOrder order);
 
     PreOrderDTO getPreOrder(PreOrderDTO preOrderDTO, List<WayPoint> wayPoints);
+
+    TransportOrderDTO getById(Long id);
 }

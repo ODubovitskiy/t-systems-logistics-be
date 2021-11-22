@@ -40,7 +40,7 @@ public class TransportOrderController implements ITransportOrderController {
 
     @Override
     public TransportOrderDTO getById(Long id) {
-        return null;
+        return transportOrderService.getById(id);
     }
 
     public PreOrderDTO getPreOrder(TransportOrderDTO transportOrderDTO) {
