@@ -41,6 +41,12 @@ public class ShipmentMapper implements Mapper<Shipment, ShipmentDTO> {
 
     @Override
     public void updateEntity(Shipment source, Shipment destination) {
-
+        if (source != null & destination != null) {
+            destination.setId(source.getId());
+            destination.setName(source.getName());
+            destination.setNumber(source.getNumber());
+            destination.setStatus(source.getStatus());
+            destination.setWeight(source.getWeight());
+        }
     }
 }

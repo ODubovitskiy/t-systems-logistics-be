@@ -18,4 +18,6 @@ public interface ITransportOrderService {
     PreOrderDTO getPreOrder(PreOrderDTO preOrderDTO, List<WayPoint> wayPoints);
 
     TransportOrderDTO getById(Long id);
+
+    TransportOrderDTO update(TransportOrder transportOrder, Long id);
 }

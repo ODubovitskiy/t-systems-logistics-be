@@ -31,9 +31,9 @@ public class TransportOrder {
     @Column(name = "status")
     private TransportOrderStatus status;
 
-    @OneToMany(mappedBy = "order", fetch = FetchType.EAGER,
+    @OneToMany(mappedBy = "order",
             cascade = {CascadeType.MERGE, CascadeType.DETACH, CascadeType.PERSIST, CascadeType.REFRESH})
-    @JsonManagedReference
+//    @JsonManagedReference
     private List<WayPoint> wayPoints;
 
     @OneToOne(cascade = {CascadeType.MERGE, CascadeType.DETACH, CascadeType.PERSIST, CascadeType.REFRESH})

@@ -62,6 +62,13 @@ public class TransportOrderMapper implements Mapper<TransportOrder, TransportOrd
 
     @Override
     public void updateEntity(TransportOrder source, TransportOrder destination) {
-
+        if (source != null & destination != null) {
+            destination.setId(source.getId());
+            destination.setNumber(source.getNumber());
+            destination.setStatus(source.getStatus());
+            destination.setTruck(source.getTruck());
+            destination.setDrivers(source.getDrivers());
+            destination.setWayPoints(source.getWayPoints());
+        }
     }
 }

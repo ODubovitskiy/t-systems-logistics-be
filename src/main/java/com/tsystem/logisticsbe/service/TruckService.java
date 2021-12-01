@@ -13,17 +13,17 @@ import com.tsystem.logisticsbe.repository.CityRepository;
 import com.tsystem.logisticsbe.repository.DriverRepository;
 import com.tsystem.logisticsbe.repository.TruckRepository;
 import com.tsystem.logisticsbe.service.api.ITruckService;
-import org.springframework.beans.factory.annotation.Autowired;
+import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Optional;
 import java.util.Set;
 
 @Service
+@RequiredArgsConstructor
 public class TruckService implements ITruckService {
 
     private final TruckRepository truckRepository;
@@ -32,43 +32,41 @@ public class TruckService implements ITruckService {
     private final DriverRepository driverRepository;
     private final CustomKafkaProducer customKafkaProducer;
 
-    @Autowired
-    public TruckService(TruckRepository truckRepository, CityRepository cityRepository,
-                        TruckMapper truckMapper, DriverRepository driverRepository, CustomKafkaProducer customKafkaProducer) {
-        this.truckRepository = truckRepository;
-        this.cityRepository = cityRepository;
-        this.truckMapper = truckMapper;
-        this.driverRepository = driverRepository;
-        this.customKafkaProducer = customKafkaProducer;
-    }
-
     public TruckDTO create(Truck truck) {
         if (truckRepository.findByRegNumberAndIsDeletedNull(truck.getRegNumber()) != null)
-            throw new ApiException(HttpStatus.BAD_REQUEST, "Truck with this registration numver already exist");
+            throw new ApiException(HttpStatus.BAD_REQUEST, "Truck with this registration number already exist");
         City city = cityRepository.getById(truck.getCurrentCity().getId());
         truck.setCurrentCity(city);
-
         TruckDTO truckDTO = truckMapper.mapToDTO(truckRepository.saveAndFlush(truck));
+        List<Truck> truckEntities = truckRepository.findByIsDeletedNull();
+        List<TruckDTO> truckDTOList = truckMapper.mapToDtoList(truckEntities);
+        for (TruckDTO dto : truckDTOList) {
+            customKafkaProducer.send(dto);
+        }
         return truckDTO;
     }
 
     public List<TruckDTO> getAll() {
         List<Truck> truckEntities = truckRepository.findByIsDeletedNull();
-        return truckMapper.mapToDtoList(truckEntities);
+        List<TruckDTO> truckDTOList = truckMapper.mapToDtoList(truckEntities);
+        for (TruckDTO truckDTO : truckDTOList) {
+            customKafkaProducer.send(truckDTO);
+        }
+        return truckDTOList;
     }
 
     public TruckDTO getByID(Long id) {
         Truck entity = truckRepository.findTruckByIdAndIsDeletedNull(id)
-                .orElseThrow(() -> new ApiException(HttpStatus.NOT_FOUND, String.format("Truck with id %s doesn't exist", id)));
+                .orElseThrow(() -> new ApiException(HttpStatus.NOT_FOUND,
+                        String.format("Truck with id %s doesn't exist", id)));
         return truckMapper.mapToDTO(entity);
     }
 
     public Long update(Long id, Truck truck) {
-        Optional<Truck> truckOptional = truckRepository.findTruckByIdAndIsDeletedNull(id);
-        if (!truckOptional.isPresent()) {
-            throw new ApiException(HttpStatus.NOT_FOUND, String.format("Truck with id = %s doesn't exist", id));
-        }
-        Truck entityToUpdate = truckOptional.get();
+        Truck truckToUpdate = truckRepository.findTruckByIdAndIsDeletedNull(id)
+                .orElseThrow(()
+                        -> new ApiException(HttpStatus.NOT_FOUND,
+                        String.format("Truck with id = %s doesn't exist", id)));
         City city = cityRepository.getById(truck.getCurrentCity().getId());
 
         if (truck.getStatus() == TruckStatus.BROKEN) {
@@ -78,11 +76,16 @@ public class TruckService implements ITruckService {
                 driver.setTruck(null);
             });
         }
-        truckMapper.updateEntity(truck, entityToUpdate);
-        entityToUpdate.setCurrentCity(city);
-        truckRepository.saveAndFlush(entityToUpdate);
+        truckMapper.updateEntity(truck, truckToUpdate);
+        truckToUpdate.setCurrentCity(city);
+        truckRepository.saveAndFlush(truckToUpdate);
+        List<Truck> truckEntities = truckRepository.findByIsDeletedNull();
 
-        return entityToUpdate.getId();
+        List<TruckDTO> truckDTOList = truckMapper.mapToDtoList(truckEntities);
+        for (TruckDTO dto : truckDTOList) {
+            customKafkaProducer.send(dto);
+        }
+        return truckToUpdate.getId();
     }
 
     public Long delete(Long id) {
@@ -97,6 +100,11 @@ public class TruckService implements ITruckService {
             driver.setTruck(null);
         });
         truck.setIsDeleted(LocalDateTime.now());
+        List<Truck> truckEntities = truckRepository.findByIsDeletedNull();
+        List<TruckDTO> truckDTOList = truckMapper.mapToDtoList(truckEntities);
+        for (TruckDTO dto : truckDTOList) {
+            customKafkaProducer.send(dto);
+        }
         return truck.getId();
     }
 
@@ -110,12 +118,11 @@ public class TruckService implements ITruckService {
 
     @Override
     public Set<TruckDTO> getTrucksForOrder(List<City> citiesToStart, Integer shipmentsTotalWeight) {
-        Optional<Set<Truck>> trucksForOrder = truckRepository.getTrucksForOrder(citiesToStart, shipmentsTotalWeight);
-        if (!trucksForOrder.isPresent())
-            throw new ApiException(HttpStatus.BAD_REQUEST, "Oops, something has broken. Try again.");
-        Set<Truck> trucks = trucksForOrder.get();
+        Set<Truck> trucks = truckRepository.getTrucksForOrder(citiesToStart, shipmentsTotalWeight)
+                .orElseThrow(() -> new ApiException(HttpStatus.BAD_REQUEST, "Oops, something has broken. Try again."));
         if (trucks.size() == 0)
-            throw new ApiException(HttpStatus.BAD_REQUEST, "There are no trucks can deliver your shipments. Please change your request");
+            throw new ApiException(HttpStatus.BAD_REQUEST,
+                    "There are no trucks can deliver your shipments. Please change your request");
 
         return truckMapper.mapToDtoSet(trucks);
     }

@@ -34,7 +34,7 @@ public class WayPoint {
     @ManyToOne(fetch = FetchType.EAGER,
             cascade = {CascadeType.MERGE, CascadeType.DETACH, CascadeType.PERSIST, CascadeType.REFRESH})
     @JoinColumn(name = "order_id")
-    @JsonBackReference
+//    @JsonBackReference
     private TransportOrder order;
 
 }

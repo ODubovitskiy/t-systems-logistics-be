@@ -56,6 +56,12 @@ public class WayPointMapper implements Mapper<WayPoint, WayPointDTO> {
 
     @Override
     public void updateEntity(WayPoint source, WayPoint destination) {
-
+        if (source != null & destination != null) {
+            destination.setId(source.getId());
+            destination.setShipment(source.getShipment());
+            destination.setCity(source.getCity());
+            destination.setOrder(source.getOrder());
+            destination.setType(source.getType());
+        }
     }
 }

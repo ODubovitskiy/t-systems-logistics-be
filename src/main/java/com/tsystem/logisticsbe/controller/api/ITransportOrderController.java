@@ -22,4 +22,10 @@ public interface ITransportOrderController {
 
     @PostMapping(value = "/orders/preorder")
     PreOrderDTO getPreOrder(@RequestBody TransportOrderDTO transportOrderDTO);
+
+    @PutMapping("/orders/{id}")
+    TransportOrderDTO update(@PathVariable("id") Long id, @RequestBody TransportOrderDTO transportOrderDTO);
+
+//    @GetMapping( "/order-drivers-verification")
+//    void checkOrderOrderDriversIds(@RequestBody String id, @RequestBody String personal_number):
 }

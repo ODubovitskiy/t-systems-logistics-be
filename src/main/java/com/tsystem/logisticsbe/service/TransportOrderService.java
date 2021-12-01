@@ -8,19 +8,22 @@ import com.tsystem.logisticsbe.entity.*;
 import com.tsystem.logisticsbe.entity.domain.DriverStatus;
 import com.tsystem.logisticsbe.entity.domain.LoadingType;
 import com.tsystem.logisticsbe.entity.domain.ShipmentStatus;
+import com.tsystem.logisticsbe.entity.domain.TransportOrderStatus;
 import com.tsystem.logisticsbe.exception.ApiException;
 import com.tsystem.logisticsbe.mapper.CityMapper;
 import com.tsystem.logisticsbe.mapper.DriverMapper;
 import com.tsystem.logisticsbe.mapper.TransportOrderMapper;
 import com.tsystem.logisticsbe.repository.*;
 import com.tsystem.logisticsbe.service.api.ITransportOrderService;
-import org.springframework.beans.factory.annotation.Autowired;
+import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.*;
 
 @Service
+@RequiredArgsConstructor
 public class TransportOrderService implements ITransportOrderService {
 
     private final TransportOrderRepository transportOrderRepository;
@@ -32,30 +35,31 @@ public class TransportOrderService implements ITransportOrderService {
     private final DriverMapper driverMapper;
     private final TruckRepository truckRepository;
     private final ShipmentRepository shipmentRepository;
-
-    @Autowired
-    public TransportOrderService(TransportOrderRepository transportOrderRepository,
-                                 TransportOrderMapper transportOrderMapper, TruckService truckService,
-                                 CityRepository cityRepository, DriverRepository driverRepository,
-                                 CityMapper cityMapper, DriverMapper driverMapper, TruckRepository truckRepository, ShipmentRepository shipmentRepository) {
-        this.transportOrderRepository = transportOrderRepository;
-        this.transportOrderMapper = transportOrderMapper;
-        this.truckService = truckService;
-        this.cityRepository = cityRepository;
-        this.driverRepository = driverRepository;
-        this.cityMapper = cityMapper;
-        this.driverMapper = driverMapper;
-        this.truckRepository = truckRepository;
-        this.shipmentRepository = shipmentRepository;
-    }
+    private final WayPointRepository wayPointRepository;
+    //    private final CustomKafkaProducer customKafkaProducer;
 
     @Override
     public List<TransportOrderDTO> getAll() {
-        return transportOrderMapper.mapToDtoList(transportOrderRepository.findAll());
+        List<TransportOrderDTO> orderDTOList = transportOrderMapper.mapToDtoList(transportOrderRepository.findAll());
+        for (TransportOrderDTO transportOrderDTO : orderDTOList) {
+//            customKafkaProducer.send(transportOrderDTO);
+        }
+        return orderDTOList;
     }
 
+    @Transactional
     @Override
     public TransportOrder create(TransportOrder order) {
+
+        String orderNumber = "ORD-".concat(
+                UUID.randomUUID()
+                        .toString()
+                        .substring(0, 5)
+                        .replaceAll("-", ""));
+
+        order.setNumber(orderNumber);
+        order.setStatus(TransportOrderStatus.IN_PROGRESS);
+
         Truck truck = handleTruckForOrder(order);
         order.setTruck(truck);
 
@@ -69,16 +73,21 @@ public class TransportOrderService implements ITransportOrderService {
         wayPoints.forEach(wayPoint -> wayPoint.setOrder(transportOrder));
         drivers.forEach(driver -> driver.setTransportOrder(transportOrder));
 
+        List<TransportOrderDTO> orderDTOList = transportOrderMapper.mapToDtoList(transportOrderRepository.findAll());
+        for (TransportOrderDTO transportOrderDTO : orderDTOList) {
+//            customKafkaProducer.send(transportOrderDTO);
+        }
+
         return transportOrder;
     }
 
     private List<WayPoint> handleWaypointsForOrder(TransportOrder order) {
         List<WayPoint> wayPoints = new ArrayList<>();
         for (WayPoint wayPoint : order.getWayPoints()) {
-            Optional<City> cityOptional = cityRepository.findById(wayPoint.getCity().getId());
-            if (!cityOptional.isPresent())
-                throw new ApiException(HttpStatus.NOT_FOUND, String.format("There is no city %s", wayPoint.getCity().getCity()));
-            wayPoint.setCity(cityOptional.get());
+            City city = cityRepository.findById(wayPoint.getCity().getId())
+                    .orElseThrow(() -> new ApiException(HttpStatus.NOT_FOUND, String.format("There is no city %s",
+                            wayPoint.getCity().getCity())));
+            wayPoint.setCity(city);
             Shipment shipment = shipmentRepository.findById(wayPoint.getShipment().getId())
                     .orElseThrow(() -> new ApiException(HttpStatus.NOT_FOUND, String.format("There is no shipment %s",
                             wayPoint.getShipment().getName())));
@@ -117,10 +126,9 @@ public class TransportOrderService implements ITransportOrderService {
     }
 
     private Truck handleTruckForOrder(TransportOrder order) {
-        Optional<Truck> truckOptional = truckRepository.findById(order.getTruck().getId());
-        if (!truckOptional.isPresent())
-            throw new ApiException(HttpStatus.NOT_FOUND, String.format("There is no truck %s", order.getTruck().getModel()));
-        Truck truck = truckOptional.get();
+        Truck truck = truckRepository.findById(order.getTruck().getId())
+                .orElseThrow(()
+                        -> new ApiException(HttpStatus.NOT_FOUND, String.format("There is no truck %s", order.getTruck().getModel())));
         truck.setAvailable(false);
         return truck;
     }
@@ -143,10 +151,9 @@ public class TransportOrderService implements ITransportOrderService {
 
         for (WayPoint wayPoint : wayPoints) {
             Long cityId = wayPoint.getCity().getId();
-            Optional<City> cityOptional = cityRepository.findById(cityId);
-            if (!cityOptional.isPresent())
-                throw new ApiException(HttpStatus.NOT_FOUND, String.format("There is no city with id = %s", cityId));
-            City city = cityOptional.get();
+            City city = cityRepository.findById(cityId)
+                    .orElseThrow(()
+                            -> new ApiException(HttpStatus.NOT_FOUND, String.format("There is no city with id = %s", cityId)));
             route.add(city);
             // TODO: 29.10.2021 Suppose we can start from any possible "loading-city" by now.
             if (wayPoint.getType() == LoadingType.LOADING)
@@ -176,7 +183,40 @@ public class TransportOrderService implements ITransportOrderService {
     @Override
     public TransportOrderDTO getById(Long id) {
         TransportOrder transportOrder = transportOrderRepository.findById(id)
-                .orElseThrow(() -> new ApiException(HttpStatus.NOT_FOUND, String.format("There is no ordrder with id = %s", id)));
+                .orElseThrow(() -> new ApiException(HttpStatus.NOT_FOUND, String.format("There is no order with id = %s", id)));
         return transportOrderMapper.mapToDTO(transportOrder);
+    }
+
+    @Override
+    @Transactional
+    public TransportOrderDTO update(TransportOrder transportOrder, Long id) {
+        TransportOrder orderToUpdate = transportOrderRepository
+                .findById(id)
+                .orElseThrow(()
+                        -> new ApiException(HttpStatus.NOT_FOUND, String.format("There is no order with id = %s", id)));
+
+        transportOrderMapper.updateEntity(transportOrder, orderToUpdate);
+
+        if (isCompleted(orderToUpdate)) {
+            orderToUpdate.setStatus(TransportOrderStatus.DONE);
+            for (Driver driver : orderToUpdate.getDrivers()) {
+                driver.setStatus(DriverStatus.REST);
+                driverRepository.save(driver);
+            }
+        }
+
+        transportOrderRepository.saveAndFlush(orderToUpdate);
+        return transportOrderMapper.mapToDTO(orderToUpdate);
+    }
+
+    private boolean isCompleted(TransportOrder orderToUpdate) {
+        boolean isCompleted = true;
+        for (WayPoint wayPoint : orderToUpdate.getWayPoints()) {
+            if (!Objects.equals(wayPoint.getShipment().getStatus(), ShipmentStatus.DELIVERED)) {
+                isCompleted = false;
+                break;
+            }
+        }
+        return isCompleted;
     }
 }
