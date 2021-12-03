@@ -26,6 +26,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.Optional;
 import java.util.Set;
 
 @Service
@@ -79,8 +80,10 @@ public class DriverService implements IDriverService {
                 .orElseThrow(() -> new ApiException(HttpStatus.NOT_FOUND, String.format("Driver with id = %s doesn't exist", id)));
         driverMapper.updateEntity(driver, driverToUpdate);
         City city = cityRepository.getById(driver.getCity().getId());
-        if (driver.getTruck().getId() != null) {
-            Truck truck = truckRepository.getById(driver.getTruck().getId());
+        if (driver.getTruck() != null) {
+            Truck truck = truckRepository.findById(driver.getTruck().getId())
+                    .orElseThrow(()->new ApiException(HttpStatus.NOT_FOUND, String.format("Truck with id = %s doesn't exist",
+                            driver.getTruck().getId())));
             if (truck.getCurrentCity() != city)
                 throw new ApiException(HttpStatus.BAD_REQUEST, "Truck and driver are located in different cities");
             driverToUpdate.setCity(city);
@@ -118,7 +121,7 @@ public class DriverService implements IDriverService {
     }
 
     @Override
-    public DriverPersonalAccountDTO getDriverByPersonalNumber(String number) {
+    public DriverPersonalAccountDTO getDriverByAppUSer() {
         DriverPersonalAccountDTO driverPersonalAccountDTO = new DriverPersonalAccountDTO();
 
         SecurityContext securityContext = SecurityContextHolder.getContext();
@@ -153,7 +156,7 @@ public class DriverService implements IDriverService {
     }
 
     @Override
-    public Driver getDriverByAppUSerId(Long id) {
+    public Driver getDriverByAppUserId(Long id) {
         return driverRepository.getDriverByAppUserId(id)
                 .orElseThrow(() -> new ApiException(HttpStatus.NOT_FOUND, "Driver not found"));
     }

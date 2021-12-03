@@ -45,7 +45,7 @@ public class UserDetailsServiceImpl implements UserDetailsService {
     public void setCurrentUser(AppUser appUser, HashMap<String, Object> payload) {
         ObjectMapper objectMapper = new ObjectMapper();
         if (appUser.getRole() == UserRoles.DRIVER) {
-            Driver driver = driverService.getDriverByAppUSerId(appUser.getId());
+            Driver driver = driverService.getDriverByAppUserId(appUser.getId());
             try {
 
                 String driverString = objectMapper.writeValueAsString(driverMapper.mapToDTO(driver));

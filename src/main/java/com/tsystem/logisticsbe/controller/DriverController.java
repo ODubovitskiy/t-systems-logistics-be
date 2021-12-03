@@ -60,7 +60,7 @@ public class DriverController implements IDriverController {
     public DriverPersonalAccountDTO getDriverByPersonalNumber(String personalNumber) {
         if (personalNumber.isEmpty())
             throw new ApiException(HttpStatus.BAD_REQUEST, "Number is incorrect");
-        return driverService.getDriverByPersonalNumber(personalNumber);
+        return driverService.getDriverByAppUSer();
     }
 
     @Override

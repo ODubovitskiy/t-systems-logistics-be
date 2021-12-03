@@ -1,4 +1,4 @@
-package com.tsystem.logisticsbe.util.validateion;
+package com.tsystem.logisticsbe.util.validation;
 
 import com.tsystem.logisticsbe.dto.TruckDTO;
 import com.tsystem.logisticsbe.exception.ApiException;

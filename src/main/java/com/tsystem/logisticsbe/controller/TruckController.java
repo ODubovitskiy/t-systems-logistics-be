@@ -6,7 +6,7 @@ import com.tsystem.logisticsbe.entity.Truck;
 import com.tsystem.logisticsbe.mapper.TruckMapper;
 import com.tsystem.logisticsbe.service.api.ITruckService;
 import com.tsystem.logisticsbe.service.TruckService;
-import com.tsystem.logisticsbe.util.validateion.TruckValidation;
+import com.tsystem.logisticsbe.util.validation.TruckValidation;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;

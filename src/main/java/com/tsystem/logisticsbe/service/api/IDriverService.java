@@ -22,9 +22,9 @@ public interface IDriverService {
 
     Long delete(Long id);
 
-    DriverPersonalAccountDTO getDriverByPersonalNumber(String number);
+    DriverPersonalAccountDTO getDriverByAppUSer();
 
    Set<DriverDTO> findDriversByCityId(Long  city);
 
-   Driver getDriverByAppUSerId(Long id);
+   Driver getDriverByAppUserId(Long id);
 }

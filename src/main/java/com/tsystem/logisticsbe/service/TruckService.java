@@ -7,7 +7,6 @@ import com.tsystem.logisticsbe.entity.Truck;
 import com.tsystem.logisticsbe.entity.domain.DriverStatus;
 import com.tsystem.logisticsbe.entity.domain.TruckStatus;
 import com.tsystem.logisticsbe.exception.ApiException;
-import com.tsystem.logisticsbe.kafka.CustomKafkaProducer;
 import com.tsystem.logisticsbe.mapper.TruckMapper;
 import com.tsystem.logisticsbe.repository.CityRepository;
 import com.tsystem.logisticsbe.repository.DriverRepository;
@@ -30,7 +29,7 @@ public class TruckService implements ITruckService {
     private final CityRepository cityRepository;
     private final TruckMapper truckMapper;
     private final DriverRepository driverRepository;
-    private final CustomKafkaProducer customKafkaProducer;
+//    private final CustomKafkaProducer customKafkaProducer;
 
     public TruckDTO create(Truck truck) {
         if (truckRepository.findByRegNumberAndIsDeletedNull(truck.getRegNumber()) != null)
@@ -41,7 +40,7 @@ public class TruckService implements ITruckService {
         List<Truck> truckEntities = truckRepository.findByIsDeletedNull();
         List<TruckDTO> truckDTOList = truckMapper.mapToDtoList(truckEntities);
         for (TruckDTO dto : truckDTOList) {
-            customKafkaProducer.send(dto);
+//            customKafkaProducer.send(dto);
         }
         return truckDTO;
     }
@@ -50,7 +49,7 @@ public class TruckService implements ITruckService {
         List<Truck> truckEntities = truckRepository.findByIsDeletedNull();
         List<TruckDTO> truckDTOList = truckMapper.mapToDtoList(truckEntities);
         for (TruckDTO truckDTO : truckDTOList) {
-            customKafkaProducer.send(truckDTO);
+//            customKafkaProducer.send(truckDTO);
         }
         return truckDTOList;
     }
@@ -83,7 +82,7 @@ public class TruckService implements ITruckService {
 
         List<TruckDTO> truckDTOList = truckMapper.mapToDtoList(truckEntities);
         for (TruckDTO dto : truckDTOList) {
-            customKafkaProducer.send(dto);
+//            customKafkaProducer.send(dto);
         }
         return truckToUpdate.getId();
     }
@@ -103,7 +102,7 @@ public class TruckService implements ITruckService {
         List<Truck> truckEntities = truckRepository.findByIsDeletedNull();
         List<TruckDTO> truckDTOList = truckMapper.mapToDtoList(truckEntities);
         for (TruckDTO dto : truckDTOList) {
-            customKafkaProducer.send(dto);
+//            customKafkaProducer.send(dto);
         }
         return truck.getId();
     }
