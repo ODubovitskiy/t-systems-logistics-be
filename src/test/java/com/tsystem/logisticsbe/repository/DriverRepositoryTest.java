@@ -63,7 +63,7 @@ class DriverRepositoryTest {
         Driver driver = new Driver(null, 1L, "John", "John", "123", 20, DriverStatus.DRIVING, city, truck, null, null);
         Driver driver2 = new Driver(LocalDateTime.now(), 2L, "John 2", "John", "456", 20, DriverStatus.ON_SHIFT, new City(), truck, null, null);
         Driver driver3 = new Driver(null, 3L, "John 3", "John", "789", 0, DriverStatus.REST, city, null, null, null);
-        Integer travelTime = (int) (city.getDistance() / truck.getAverageSpeed()) ;
+        Integer travelTime = (int) (city.getDistance() / truck.getAverageSpeed());
 
         driverRepositoryUnderTest.saveAll(List.of(driver, driver2, driver3));
 

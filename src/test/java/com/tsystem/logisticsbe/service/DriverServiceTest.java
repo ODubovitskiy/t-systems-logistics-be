@@ -224,7 +224,7 @@ class DriverServiceTest {
 
         given(driverRepository.getDriverByAppUserId(appUser.getId()))
                 .willReturn(Optional.of(driver));
-        DriverPersonalAccountDTO driverByPersonalNumber = driverServiceUnderTest.getDriverByAppUSer();
+        DriverPersonalAccountDTO driverByPersonalNumber = driverServiceUnderTest.getDriverPersonalAccount();
 
         assertThat(driverByPersonalNumber.getDriver()).isEqualTo(driver);
 

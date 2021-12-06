@@ -21,12 +21,8 @@ public class DriverDTO {
 
     @JsonIgnore
     public final static int SHIFT_LIMIT = 176;
-//    @Pattern(regexp = "^[A-Za-z]$", message = "Name can consist of letters only")
-//    @NotBlank
     private String name;
 
-//    @Pattern(regexp = "^[A-Za-z]$", message = "Last name can consist of letters only")
-//    @NotBlank()
     @JsonProperty("last_name")
     private String lastName;
 

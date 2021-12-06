@@ -1,17 +1,26 @@
 package com.tsystem.logisticsbe.entity.domain;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.Getter;
+
+import java.util.Locale;
 
 @Getter
 public enum DriverStatus {
 
-    REST(1, "Rest"), DRIVING(2, "Driving"), ON_SHIFT(3, "On shift");
+    @JsonProperty("REST")
+    REST(1, "REST"),
+    @JsonProperty("DRIVING")
+    DRIVING(2, "DRIVING"),
+    @JsonProperty("ON SHIFT")
+    ON_SHIFT(3, "ON SHIFT");
 
     private final int id;
     private final String status;
 
     DriverStatus(int id, String status) {
         this.id = id;
-        this.status = status;
+        this.status = status.toUpperCase(Locale.ROOT);
     }
 }

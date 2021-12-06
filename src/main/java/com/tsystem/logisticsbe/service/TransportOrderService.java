@@ -13,6 +13,7 @@ import com.tsystem.logisticsbe.exception.ApiException;
 import com.tsystem.logisticsbe.mapper.CityMapper;
 import com.tsystem.logisticsbe.mapper.DriverMapper;
 import com.tsystem.logisticsbe.mapper.TransportOrderMapper;
+import com.tsystem.logisticsbe.mapper.WayPointMapper;
 import com.tsystem.logisticsbe.repository.*;
 import com.tsystem.logisticsbe.service.api.ITransportOrderService;
 import lombok.RequiredArgsConstructor;
@@ -36,6 +37,7 @@ public class TransportOrderService implements ITransportOrderService {
     private final TruckRepository truckRepository;
     private final ShipmentRepository shipmentRepository;
     private final WayPointRepository wayPointRepository;
+    private final WayPointMapper wayPointMapper;
     //    private final CustomKafkaProducer customKafkaProducer;
 
     @Override
@@ -194,15 +196,29 @@ public class TransportOrderService implements ITransportOrderService {
                 .findById(id)
                 .orElseThrow(()
                         -> new ApiException(HttpStatus.NOT_FOUND, String.format("There is no order with id = %s", id)));
-
         transportOrderMapper.updateEntity(transportOrder, orderToUpdate);
+
+        List<WayPoint> wayPoints = new ArrayList<>(orderToUpdate.getWayPoints());
+        for (WayPoint item : wayPoints) {
+            WayPoint wayPoint = wayPointRepository.findById(item.getId())
+                    .orElseThrow(() -> new ApiException(HttpStatus.NOT_FOUND, "There is no such waypoint on the route"));
+            wayPointMapper.updateEntity(item, wayPoint);
+            wayPoint.setOrder(orderToUpdate);
+            wayPointRepository.save(wayPoint);
+        }
 
         if (isCompleted(orderToUpdate)) {
             orderToUpdate.setStatus(TransportOrderStatus.DONE);
-            for (Driver driver : orderToUpdate.getDrivers()) {
+            Truck truck = orderToUpdate.getTruck();
+            truck.setAvailable(true);
+            truckRepository.save(truck);
+            Set<Driver> drivers = new HashSet<>(orderToUpdate.getDrivers());
+            for (Driver driver : drivers) {
                 driver.setStatus(DriverStatus.REST);
                 driverRepository.save(driver);
             }
+        } else {
+            driverRepository.saveAll(orderToUpdate.getDrivers());
         }
 
         transportOrderRepository.saveAndFlush(orderToUpdate);

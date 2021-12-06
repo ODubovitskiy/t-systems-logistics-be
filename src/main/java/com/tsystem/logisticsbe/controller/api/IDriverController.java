@@ -33,8 +33,8 @@ public interface IDriverController {
     @PreAuthorize("hasAnyAuthority('permission:write')")
     Long delete(@PathVariable("id") Long id);
 
-    @GetMapping("/drivers/personal-account/{personalNumber}")
-    DriverPersonalAccountDTO getDriverByPersonalNumber(@PathVariable("personalNumber") String personalNumber);
+    @GetMapping("/drivers/personal-account")
+    DriverPersonalAccountDTO getDriverPersonalAccount();
 
     @GetMapping("/drivers/city")
     Set<DriverDTO> findDriversByCityId(@RequestParam(name = "id") Optional<String> id);

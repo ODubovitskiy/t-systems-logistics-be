@@ -121,23 +121,10 @@ public class DriverService implements IDriverService {
     }
 
     @Override
-    public DriverPersonalAccountDTO getDriverByAppUSer() {
+    public DriverPersonalAccountDTO getDriverPersonalAccount() {
         DriverPersonalAccountDTO driverPersonalAccountDTO = new DriverPersonalAccountDTO();
 
-        SecurityContext securityContext = SecurityContextHolder.getContext();
-        UserDetails principal = (UserDetails) securityContext.getAuthentication().getPrincipal();
-
-        AppUser appUser = appUserRepository.findByEmail(principal.getUsername())
-                .orElseThrow(() -> {
-                    throw new ApiException(HttpStatus.NOT_FOUND,
-                            String.format("User with email '%s' doesn't exist", principal.getUsername()));
-                });
-        Driver driver = driverRepository.getDriverByAppUserId(appUser.getId())
-                .orElseThrow(() -> {
-                    throw new ApiException(HttpStatus.NOT_FOUND,
-                            String.format("Driver with email '%s' doesn't exist", principal.getUsername()));
-                });
-
+        Driver driver = getDriverByPrincipal();
         TransportOrder transportOrder = driver.getTransportOrder();
         driverPersonalAccountDTO.setDriver(driverMapper.mapToDTO(driver));
 
@@ -148,6 +135,22 @@ public class DriverService implements IDriverService {
         driver.setTransportOrder(new TransportOrder());
         driverPersonalAccountDTO.setTransportOrder(transportOrderMapper.mapToDTO(transportOrder));
         return driverPersonalAccountDTO;
+    }
+
+    private Driver getDriverByPrincipal() {
+        SecurityContext securityContext = SecurityContextHolder.getContext();
+        UserDetails principal = (UserDetails) securityContext.getAuthentication().getPrincipal();
+
+        AppUser appUser = appUserRepository.findByEmail(principal.getUsername())
+                .orElseThrow(() -> {
+                    throw new ApiException(HttpStatus.NOT_FOUND,
+                            String.format("User with email '%s' doesn't exist", principal.getUsername()));
+                });
+        return driverRepository.getDriverByAppUserId(appUser.getId())
+                .orElseThrow(() -> {
+                    throw new ApiException(HttpStatus.NOT_FOUND,
+                            String.format("Driver with email '%s' doesn't exist", principal.getUsername()));
+                });
     }
 
     @Override

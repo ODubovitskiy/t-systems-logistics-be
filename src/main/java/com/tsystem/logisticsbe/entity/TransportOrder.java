@@ -1,7 +1,5 @@
 package com.tsystem.logisticsbe.entity;
 
-import com.fasterxml.jackson.annotation.JsonBackReference;
-import com.fasterxml.jackson.annotation.JsonManagedReference;
 import com.tsystem.logisticsbe.entity.domain.TransportOrderStatus;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -32,7 +30,7 @@ public class TransportOrder {
     private TransportOrderStatus status;
 
     @OneToMany(mappedBy = "order",
-            cascade = {CascadeType.MERGE, CascadeType.DETACH, CascadeType.PERSIST, CascadeType.REFRESH})
+            cascade = {CascadeType.DETACH, CascadeType.PERSIST, CascadeType.REFRESH})
 //    @JsonManagedReference
     private List<WayPoint> wayPoints;
 
@@ -40,7 +38,8 @@ public class TransportOrder {
     @JoinColumn(name = "truck_id")
     private Truck truck;
 
-    @OneToMany(mappedBy = "transportOrder")
+    @OneToMany(mappedBy = "transportOrder",
+            cascade = {CascadeType.MERGE, CascadeType.DETACH, CascadeType.PERSIST, CascadeType.REFRESH})
     private Set<Driver> drivers;
 
 }
